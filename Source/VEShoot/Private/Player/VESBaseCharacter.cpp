@@ -3,10 +3,13 @@
 #include "Player/VESBaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/VESCharacterMovementComponent.h"
 
 // Sets default values
-AVESBaseCharacter::AVESBaseCharacter()
+AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit) 
+	: Super(ObjInit.SetDefaultSubobjectClass<UVESCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -40,14 +43,34 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &AVESBaseCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnAround", this, &AVESBaseCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AVESBaseCharacter::Jump);
+
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AVESBaseCharacter::OnStartRunning);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AVESBaseCharacter::OnStopRunning);
+}
+
+
+bool AVESBaseCharacter::IsRunning() const
+{
+	return WantsToRun && IsMovingForward && !GetVelocity().IsZero();
 }
 
 void AVESBaseCharacter::MoveForward(float Amount)
 {
+	IsMovingForward = Amount > 0.0f;
 	AddMovementInput(GetActorForwardVector(), Amount);
 }
 
 void AVESBaseCharacter::MoveRight(float Amount)
 {
 	AddMovementInput(GetActorRightVector(), Amount);
+}
+
+void AVESBaseCharacter::OnStartRunning()
+{
+	WantsToRun = true;
+}
+
+void AVESBaseCharacter::OnStopRunning()
+{
+	WantsToRun = false;
 }
