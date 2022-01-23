@@ -8,7 +8,7 @@
 #include "Components/VESCharacterMovementComponent.h"
 
 // Sets default values
-AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit) 
+AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit.SetDefaultSubobjectClass<UVESCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -48,20 +48,35 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AVESBaseCharacter::OnStopRunning);
 }
 
-
 bool AVESBaseCharacter::IsRunning() const
 {
 	return WantsToRun && IsMovingForward && !GetVelocity().IsZero();
 }
 
+float AVESBaseCharacter::GetMovementDirection() const
+{
+	if (GetVelocity().IsZero())
+		return 0.0f;
+
+	const auto VelocityNormal = GetVelocity().GetSafeNormal();
+	const auto AngularBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
+	const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
+	const auto Degrees = FMath::RadiansToDegrees(AngularBetween);
+	return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
+}
+
 void AVESBaseCharacter::MoveForward(float Amount)
 {
+	if (Amount == 0.0f)
+		return;
 	IsMovingForward = Amount > 0.0f;
 	AddMovementInput(GetActorForwardVector(), Amount);
 }
 
 void AVESBaseCharacter::MoveRight(float Amount)
 {
+	if (Amount == 0.0f)
+		return;
 	AddMovementInput(GetActorRightVector(), Amount);
 }
 
