@@ -14,6 +14,7 @@ class VESHOOT_API AVESGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-		void Begin();
-	
+	public:
+	AVESGameModeBase();
+
 };

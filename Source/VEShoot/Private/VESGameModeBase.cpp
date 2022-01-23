@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VESGameModeBase.h"
+#include "Player/VESBaseCharacter.h"
+#include "Player/VESPlayerController.h"
 
-void AVESGameModeBase::Begin()
+AVESGameModeBase::AVESGameModeBase()
 {
-	for (int i = 0; i < 10; ++i)
-	{
-	}
-}
+	DefaultPawnClass = AVESBaseCharacter::StaticClass();
+	PlayerControllerClass = AVESPlayerController::StaticClass();
+};
