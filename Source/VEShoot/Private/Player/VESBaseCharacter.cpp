@@ -5,7 +5,6 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-
 // Sets default values
 AVESBaseCharacter::AVESBaseCharacter()
 {
@@ -40,6 +39,7 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVESBaseCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &AVESBaseCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnAround", this, &AVESBaseCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AVESBaseCharacter::Jump);
 }
 
 void AVESBaseCharacter::MoveForward(float Amount)
