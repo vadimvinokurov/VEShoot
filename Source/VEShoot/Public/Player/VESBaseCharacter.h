@@ -7,6 +7,7 @@
 #include "VESBaseCharacter.generated.h"
 
 class UCameraComponent;
+class USpringArmComponent;
 
 UCLASS()
 class VESHOOT_API AVESBaseCharacter : public ACharacter
@@ -23,6 +24,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UCameraComponent* CameraComponent;
+
+		UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	USpringArmComponent* SpringArmComponent;
 
 public:
 	// Called every frame
