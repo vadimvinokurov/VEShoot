@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UVESHealthComponent;
+class UTextRenderComponent;
 
 UCLASS()
 class VESHOOT_API AVESBaseCharacter : public ACharacter
@@ -27,6 +29,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UVESHealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UTextRenderComponent* HealthTextComponent;
 
 public:
 	// Called every frame

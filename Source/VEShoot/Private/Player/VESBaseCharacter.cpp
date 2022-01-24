@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/VESCharacterMovementComponent.h"
+#include "Components/VESHealthComponent.h"
+#include "Components/TextRenderComponent.h"
 
 // Sets default values
 AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
@@ -20,18 +22,28 @@ AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	HealthComponent = CreateDefaultSubobject<UVESHealthComponent>("HealthComponent");
+
+	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
+	HealthTextComponent->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
 void AVESBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	check(HealthComponent);
+	check(HealthTextComponent);
 }
 
 // Called every frame
 void AVESBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	const auto Health = HealthComponent->GetHealth();
+	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 // Called to bind functionality to input
