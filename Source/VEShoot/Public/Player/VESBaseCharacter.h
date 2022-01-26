@@ -36,6 +36,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UTextRenderComponent* HealthTextComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UAnimMontage* DeapthAnimMotage;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,4 +60,7 @@ private:
 	void MoveRight(float Amount);
 	void OnStartRunning();
 	void OnStopRunning();
+
+	void OnDeath();
+	void OnHealthChanged(float Health);
 };

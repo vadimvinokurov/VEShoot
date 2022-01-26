@@ -8,6 +8,7 @@
 #include "Components/VESCharacterMovementComponent.h"
 #include "Components/VESHealthComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "GameFramework/Controller.h"
 
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
@@ -38,17 +39,17 @@ void AVESBaseCharacter::BeginPlay()
 
 	check(HealthComponent);
 	check(HealthTextComponent);
+	check(GetCharacterMovement());
+
+	OnHealthChanged(HealthComponent->GetHealth());
+	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
+	HealthComponent->OnHealthChanged.AddUObject(this, &AVESBaseCharacter::OnHealthChanged);
 }
 
 // Called every frame
 void AVESBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
-
-	const auto Health = HealthComponent->GetHealth();
-	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 // Called to bind functionality to input
@@ -106,3 +107,24 @@ void AVESBaseCharacter::OnStopRunning()
 {
 	WantsToRun = false;
 }
+
+
+void AVESBaseCharacter::OnHealthChanged(float Health)
+{
+	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
+}
+
+void AVESBaseCharacter::OnDeath() {
+	UE_LOG(BaseCharacterLog, Display, TEXT("Player pogib %s"), *GetName());
+	PlayAnimMontage(DeapthAnimMotage);
+
+	GetCharacterMovement()->DisableMovement();
+
+	SetLifeSpan(5.0f);
+
+	if(Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
+}
+

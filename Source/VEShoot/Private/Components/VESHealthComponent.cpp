@@ -2,8 +2,6 @@
 
 #include "Components/VESHealthComponent.h"
 #include "GameFramework/Actor.h"
-#include "Dev/VESFireDamageType.h"
-#include "Dev/VESIceDamageType.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -19,7 +17,8 @@ void UVESHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	Health = MaxHealth;
-	
+	OnHealthChanged.Broadcast(Health);
+
 	AActor* ComponentOwner = GetOwner();
 	if (ComponentOwner)
 	{
@@ -31,19 +30,14 @@ void UVESHealthComponent::BeginPlay()
 void UVESHealthComponent::OnTakeAnyDamage(
 	AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	Health -= Damage;
+	if (Damage <= 0.0f || IsDead()) 
+		return;
 
-	UE_LOG(HealthComponentLog, Display, TEXT("Damage: %f"), Damage);
+	Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(Health);
 
-	if (DamageType)
+	if (IsDead())
 	{
-		if (DamageType->IsA<UVESFireDamageType>())
-		{
-			UE_LOG(HealthComponentLog, Display, TEXT("So HOOOOOOOOOOOOOT!"));
-		}
-		else if (DamageType->IsA<UVESIceDamageType>())
-		{
-			UE_LOG(HealthComponentLog, Display, TEXT("So Cooooooooold!"));
-		}
+		OnDeath.Broadcast();
 	}
 }
