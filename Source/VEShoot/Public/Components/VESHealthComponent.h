@@ -7,8 +7,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class VESHOOT_API UVESHealthComponent : public UActorComponent
+	UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class VESHOOT_API UVESHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -32,13 +31,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHealEnable"))
 	float AutoHealDelay = 3.0f;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHealEnable"))
 	float AutoHealIncValue = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHealEnable"))
 	float AutoHealIncDelay = 0.3f;
-
 
 	virtual void BeginPlay() override;
 
@@ -54,5 +52,4 @@ private:
 	void OnAutoHeal();
 
 	void SetHealth(float NewHealth);
-	
 };

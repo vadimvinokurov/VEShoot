@@ -7,14 +7,13 @@
 #include "VESGameModeBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VESHOOT_API AVESGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	public:
+public:
 	AVESGameModeBase();
-
 };

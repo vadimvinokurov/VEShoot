@@ -52,7 +52,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Movement") 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsRunning() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

@@ -7,11 +7,10 @@
 #include "VESIceDamageType.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VESHOOT_API UVESIceDamageType : public UDamageType
 {
 	GENERATED_BODY()
-	
 };

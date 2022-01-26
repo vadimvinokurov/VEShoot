@@ -3,4 +3,4 @@
 #include "VEShoot.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, VEShoot, "VEShoot" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, VEShoot, "VEShoot");

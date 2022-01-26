@@ -7,11 +7,10 @@
 #include "VESPlayerController.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VESHOOT_API AVESPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
 };

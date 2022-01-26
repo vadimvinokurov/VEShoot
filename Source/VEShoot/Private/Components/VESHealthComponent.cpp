@@ -12,12 +12,11 @@ UVESHealthComponent::UVESHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
 // Called when the game starts
 void UVESHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	SetHealth(MaxHealth);
 
 	AActor* ComponentOwner = GetOwner();
@@ -30,9 +29,9 @@ void UVESHealthComponent::BeginPlay()
 void UVESHealthComponent::OnTakeAnyDamage(
 	AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.0f || IsDead() || !GetWorld()) 
+	if (Damage <= 0.0f || IsDead() || !GetWorld())
 		return;
-	
+
 	GetWorld()->GetTimerManager().ClearTimer(AutoHealthTimerHandle);
 
 	SetHealth(Health - Damage);
@@ -40,22 +39,26 @@ void UVESHealthComponent::OnTakeAnyDamage(
 	if (IsDead())
 	{
 		OnDeath.Broadcast();
-	} else if(AutoHealEnable) {
-		GetWorld()->GetTimerManager().SetTimer(AutoHealthTimerHandle, this, &UVESHealthComponent::OnAutoHeal, AutoHealIncDelay, true, AutoHealDelay);
+	}
+	else if (AutoHealEnable)
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			AutoHealthTimerHandle, this, &UVESHealthComponent::OnAutoHeal, AutoHealIncDelay, true, AutoHealDelay);
 	}
 }
 
 void UVESHealthComponent::OnAutoHeal()
 {
-	SetHealth(Health +  AutoHealIncValue);
-	
-	if(FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld()) {
+	SetHealth(Health + AutoHealIncValue);
+
+	if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+	{
 		GetWorld()->GetTimerManager().ClearTimer(AutoHealthTimerHandle);
 	}
 }
 
 void UVESHealthComponent::SetHealth(float NewHealth)
 {
-		Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
-		OnHealthChanged.Broadcast(Health);
+	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(Health);
 }

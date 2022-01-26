@@ -52,8 +52,9 @@ void AVESBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 	const auto FallVelocityZ = -GetCharacterMovement()->Velocity.Z;
 	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
 
-	if(FallVelocityZ < LandedDamageVelocity.X) return;
-	const auto FinalDamage = FMath:: GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+	if (FallVelocityZ < LandedDamageVelocity.X)
+		return;
+	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
 	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
 	TakeDamage(FinalDamage, FDamageEvent(), nullptr, nullptr);
 }
@@ -120,13 +121,13 @@ void AVESBaseCharacter::OnStopRunning()
 	WantsToRun = false;
 }
 
-
 void AVESBaseCharacter::OnHealthChanged(float Health)
 {
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
-void AVESBaseCharacter::OnDeath() {
+void AVESBaseCharacter::OnDeath()
+{
 	UE_LOG(BaseCharacterLog, Display, TEXT("Player pogib %s"), *GetName());
 	PlayAnimMontage(DeapthAnimMotage);
 
@@ -134,9 +135,8 @@ void AVESBaseCharacter::OnDeath() {
 
 	SetLifeSpan(5.0f);
 
-	if(Controller)
+	if (Controller)
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
 }
-
