@@ -39,6 +39,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* DeapthAnimMotage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	FVector2D LandedDamageVelocity = FVector2D(900.0f, 1200.0f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	FVector2D LandedDamage = FVector2D(10.f, 100.0f);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -63,4 +69,7 @@ private:
 
 	void OnDeath();
 	void OnHealthChanged(float Health);
+
+	UFUNCTION()
+	void OnGroundLanded(const FHitResult& Hit);
 };

@@ -44,6 +44,18 @@ void AVESBaseCharacter::BeginPlay()
 	OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &AVESBaseCharacter::OnHealthChanged);
+	LandedDelegate.AddDynamic(this, &AVESBaseCharacter::OnGroundLanded);
+}
+
+void AVESBaseCharacter::OnGroundLanded(const FHitResult& Hit)
+{
+	const auto FallVelocityZ = -GetCharacterMovement()->Velocity.Z;
+	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
+
+	if(FallVelocityZ < LandedDamageVelocity.X) return;
+	const auto FinalDamage = FMath:: GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
+	TakeDamage(FinalDamage, FDamageEvent(), nullptr, nullptr);
 }
 
 // Called every frame
