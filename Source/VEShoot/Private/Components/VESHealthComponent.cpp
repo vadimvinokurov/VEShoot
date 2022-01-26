@@ -30,8 +30,6 @@ void UVESHealthComponent::OnTakeAnyDamage(
 	AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	Health -= Damage;
-	if (Health < 0)
-		Health = 0;
 
 	UE_LOG(HealthComponentLog, Display, TEXT("Damage: %f"), Damage);
 }
