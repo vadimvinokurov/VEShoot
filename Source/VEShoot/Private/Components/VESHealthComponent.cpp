@@ -2,6 +2,8 @@
 
 #include "Components/VESHealthComponent.h"
 #include "GameFramework/Actor.h"
+#include "Dev/VESFireDamageType.h"
+#include "Dev/VESIceDamageType.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -32,4 +34,16 @@ void UVESHealthComponent::OnTakeAnyDamage(
 	Health -= Damage;
 
 	UE_LOG(HealthComponentLog, Display, TEXT("Damage: %f"), Damage);
+
+	if (DamageType)
+	{
+		if (DamageType->IsA<UVESFireDamageType>())
+		{
+			UE_LOG(HealthComponentLog, Display, TEXT("So HOOOOOOOOOOOOOT!"));
+		}
+		else if (DamageType->IsA<UVESIceDamageType>())
+		{
+			UE_LOG(HealthComponentLog, Display, TEXT("So Cooooooooold!"));
+		}
+	}
 }

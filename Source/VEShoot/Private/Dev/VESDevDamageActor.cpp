@@ -29,6 +29,6 @@ void AVESDevDamageActor::Tick(float DeltaTime)
 	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 24, SphereColor);
 
 	//TODO: Some problems with UGameplayStatics::ApplyRadialDamage.It'is only working in Blueprint
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, GetActorLocation(), Radius, nullptr, {}, this, nullptr, DoFullDamage);
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, GetActorLocation(), Radius, DamageType, {}, this, nullptr, DoFullDamage);
 }
 
