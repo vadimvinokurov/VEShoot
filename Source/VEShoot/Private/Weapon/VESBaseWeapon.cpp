@@ -38,8 +38,11 @@ void AVESBaseWeapon::MakeShot()
 
 	if (HitResult.bBlockingHit)
 	{
+		MakeDamage(HitResult);
+
 		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+
 		UE_LOG(LogBaseWeapon, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
 	}
 	else
@@ -76,7 +79,7 @@ FVector AVESBaseWeapon::GetMuzzleWorldLocation() const
 	return WeaponMesh->GetSocketLocation(MuzzleSocketName);
 }
 
-bool AVESBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const 
+bool AVESBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;
@@ -89,11 +92,18 @@ bool AVESBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 	return true;
 }
 
-
 void AVESBaseWeapon::MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const
 {
 	if (!GetWorld()) return;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(GetOwner());
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
+}
+
+void AVESBaseWeapon::MakeDamage(const FHitResult& HitResult)
+{
+	const auto DamageActor = HitResult.GetActor();
+	if (!DamageActor) return;
+
+	DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }

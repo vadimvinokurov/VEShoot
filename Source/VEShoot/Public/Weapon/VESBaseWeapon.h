@@ -28,13 +28,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float TraceMaxDistance = 1500.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float DamageAmount = 10;
+
 	virtual void BeginPlay() override;
 
 private:
 	APlayerController* AVESBaseWeapon::GetPlayerController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 	FVector GetMuzzleWorldLocation() const;
-	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const; 
+	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeShot();
+	void MakeDamage(const FHitResult& HitResult);
 };
