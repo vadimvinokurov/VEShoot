@@ -14,6 +14,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
 public:
 	UVESHealthComponent();
 
+	UFUNCTION(BlueprintCallable)
 	float GetHealth() const { return Health; }
 
 	UFUNCTION(BlueprintCallable)

@@ -9,6 +9,7 @@
 #include "Components/VESHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
+#include "Weapon/VESBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
@@ -45,6 +46,8 @@ void AVESBaseCharacter::BeginPlay()
 	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &AVESBaseCharacter::OnHealthChanged);
 	LandedDelegate.AddDynamic(this, &AVESBaseCharacter::OnGroundLanded);
+
+	SpawnWeapon();
 }
 
 void AVESBaseCharacter::OnGroundLanded(const FHitResult& Hit)
@@ -138,5 +141,17 @@ void AVESBaseCharacter::OnDeath()
 	if (Controller)
 	{
 		Controller->ChangeState(NAME_Spectating);
+	}
+}
+
+void AVESBaseCharacter::SpawnWeapon() {
+	if (!GetWorld())
+		return;
+
+	const auto Weapon = GetWorld()->SpawnActor<AVESBaseWeapon>(WeaponClass);
+	if (Weapon)
+	{
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
 	}
 }
