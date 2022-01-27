@@ -33,7 +33,6 @@ AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
 
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
-	HealthTextComponent->SetOwnerNoSee(true);
 
 	WeaponComponent = CreateDefaultSubobject<UVESWeaponComponent>("WeaponComponent");
 }

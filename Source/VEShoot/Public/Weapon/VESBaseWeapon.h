@@ -21,7 +21,15 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	FName MuzzleSocketName = "MuzzleSocket";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float TraceMaxDistance = 1500.0f;
+
 	virtual void BeginPlay() override;
 
-public:
+protected:
+	void MakeShot();
 };

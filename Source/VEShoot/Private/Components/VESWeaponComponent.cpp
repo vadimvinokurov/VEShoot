@@ -17,16 +17,16 @@ void UVESWeaponComponent::BeginPlay()
 
 void UVESWeaponComponent::SpawnWeapon()
 {
-	if (!GetWorld()) return;
-
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (!Character) return;
+	if (!GetWorld()) return;
 
 	CurrentWeapon = GetWorld()->SpawnActor<AVESBaseWeapon>(WeaponClass);
 	if (!CurrentWeapon) return;
 
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 	CurrentWeapon->AttachToComponent(Character->GetMesh(), AttachmentRules, WeaponAttachPointName);
+	CurrentWeapon->SetOwner(Character);
 }
 
 void UVESWeaponComponent::Fire()
