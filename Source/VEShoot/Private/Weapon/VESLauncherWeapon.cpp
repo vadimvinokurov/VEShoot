@@ -3,7 +3,6 @@
 
 #include "Weapon/VESLauncherWeapon.h"
 #include "Weapon/VESProjectile.h"
-#include "Kismet/GameplayStatics.h"
 
 void AVESLauncherWeapon::StartFire() 
 {
@@ -12,10 +11,25 @@ void AVESLauncherWeapon::StartFire()
 
 void AVESLauncherWeapon::MakeShot() 
 {
-	const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
-	auto Projectile = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), ProjectileClass, SpawnTransform);
-	// set projectile params
+	if (!GetWorld()) return;
 
-	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+	FVector TraceStart;
+	FVector TraceEnd;
+	if (!GetTraceData(TraceStart, TraceEnd)) return;
+
+	FHitResult HitResult;
+	MakeHit(HitResult, TraceStart, TraceEnd);
+
+	const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+	const FVector Direction = (EndPoint - GetMuzzleWorldLocation());
+
+	const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
+	AVESProjectile* Projectile = GetWorld()->SpawnActorDeferred<AVESProjectile>(ProjectileClass, SpawnTransform);
+	if (Projectile)
+	{
+		Projectile->SetShotDirection(Direction);
+		Projectile->FinishSpawning(SpawnTransform);
+	}
+	// set projectile params
 
 }

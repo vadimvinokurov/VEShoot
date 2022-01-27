@@ -7,18 +7,31 @@
 #include "VESProjectile.generated.h"
 
 class USphereComponent;
+class UProjectileMovementComponent;
 
 UCLASS()
 class VESHOOT_API AVESProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AVESProjectile();
+
+	void SetShotDirection(const FVector& Direction)
+	{
+		ShotDirection = Direction;
+		ShotDirection.Normalize();
+	}
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
 	USphereComponent* CollisionComponent;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
+	UProjectileMovementComponent* MovementComponent;
+
 	virtual void BeginPlay() override;
+
+private:
+	FVector ShotDirection;
 };
