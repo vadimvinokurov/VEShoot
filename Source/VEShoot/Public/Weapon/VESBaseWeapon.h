@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "VESBaseWeapon.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
+
 class USkeletalMeshComponent;
 
 USTRUCT(BlueprintType)
@@ -31,8 +33,13 @@ class VESHOOT_API AVESBaseWeapon : public AActor
 public:
 	AVESBaseWeapon();
 
+	FOnClipEmptySignature OnClipEmpty;
+
 	virtual void StartFire();
 	virtual void StopFire();
+
+	void ChangedClip();
+	bool CanReload() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -60,7 +67,6 @@ protected:
 	void DecreaseAmmo();
 	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
-	void ChangedClip();
 	void LogAmmo();
 
 private:

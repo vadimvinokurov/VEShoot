@@ -77,11 +77,18 @@ void AVESBaseWeapon::MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector
 
 void AVESBaseWeapon::DecreaseAmmo()
 {
+	if (CurrentAmmo.Bullets == 0)
+	{
+		UE_LOG(LogBaseWeapon, Warning, TEXT("Clip is empty"));
+		return;
+	}
+
 	--CurrentAmmo.Bullets;
 	LogAmmo();
 	if (IsClipEmpty() && !IsAmmoEmpty())
 	{
-		ChangedClip();
+		StopFire();
+		OnClipEmpty.Broadcast();
 	}
 }
 
@@ -97,11 +104,17 @@ bool AVESBaseWeapon::IsClipEmpty() const
 
 void AVESBaseWeapon::ChangedClip()
 {
-	CurrentAmmo.Bullets = DefaultAmmo.Bullets;
+	
 	if (!CurrentAmmo.Infinite)
 	{
+		if (CurrentAmmo.Clips == 0)
+		{
+			UE_LOG(LogBaseWeapon, Warning, TEXT("No more clips"));
+			return;
+		}
 		CurrentAmmo.Clips--;
 	}
+	CurrentAmmo.Bullets = DefaultAmmo.Bullets;
 	UE_LOG(LogBaseWeapon, Display, TEXT("------- Changed Clip ----------"));
 }
 
@@ -110,4 +123,9 @@ void AVESBaseWeapon::LogAmmo()
 	FString AmmoInfo = "Ammo: " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
 	AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
 	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
+}
+
+bool AVESBaseWeapon::CanReload() const 
+{
+	return CurrentAmmo.Bullets < DefaultAmmo.Bullets && CurrentAmmo.Clips > 0;
 }

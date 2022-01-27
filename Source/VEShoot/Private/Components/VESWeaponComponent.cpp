@@ -45,6 +45,7 @@ void UVESWeaponComponent::SpawnWeapons()
 	{
 		auto Weapon = GetWorld()->SpawnActor<AVESBaseWeapon>(OneWeaponData.WeaponClass);
 		if (!Weapon) continue;
+		Weapon->OnClipEmpty.AddUObject(this, &UVESWeaponComponent::OnEmptyClip);
 		Weapon->SetOwner(Character);
 		Weapons.Add(Weapon);
 
@@ -111,9 +112,7 @@ void UVESWeaponComponent::NextWeapon()
 
 void UVESWeaponComponent::Reload()
 {
-	if (!CanReload()) return;
-	ReloadAnimInProgress = true;
-	PlayAnimMontage(CurrentReloadAnimMontage);
+	ChangedClip();
 }
 
 void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
@@ -162,7 +161,6 @@ bool UVESWeaponComponent::CanFire() const
 	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
-
 bool UVESWeaponComponent::CanEquip() const
 {
 	return !EquipAnimInProgress && !ReloadAnimInProgress;
@@ -170,5 +168,22 @@ bool UVESWeaponComponent::CanEquip() const
 
 bool UVESWeaponComponent::CanReload() const
 {
-	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
+	return CurrentWeapon &&			 //
+		   !EquipAnimInProgress &&	 //
+		   !ReloadAnimInProgress &&	 //
+		   CurrentWeapon->CanReload();
+}
+
+void UVESWeaponComponent::OnEmptyClip()
+{
+	ChangedClip();
+}
+void UVESWeaponComponent::ChangedClip()
+{
+	if (!CanReload()) return;
+	CurrentWeapon->StopFire();
+	CurrentWeapon->ChangedClip();
+
+	ReloadAnimInProgress = true;
+	PlayAnimMontage(CurrentReloadAnimMontage);
 }

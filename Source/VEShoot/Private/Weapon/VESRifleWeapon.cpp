@@ -5,8 +5,8 @@
 
 void AVESRifleWeapon::StartFire()
 {
-	MakeShot();
 	GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &AVESRifleWeapon::MakeShot, TimeBetweenShots, true);
+	MakeShot();
 }
 
 void AVESRifleWeapon::StopFire()
