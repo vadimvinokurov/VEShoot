@@ -16,6 +16,8 @@ class VESHOOT_API AVESBaseWeapon : public AActor
 public:
 	AVESBaseWeapon();
 
+	virtual void Fire();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;

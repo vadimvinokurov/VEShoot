@@ -3,6 +3,8 @@
 #include "Weapon/VESBaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
+
 // Sets default values
 AVESBaseWeapon::AVESBaseWeapon()
 {
@@ -12,7 +14,14 @@ AVESBaseWeapon::AVESBaseWeapon()
 	SetRootComponent(WeaponMesh);
 }
 
+
+
 void AVESBaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AVESBaseWeapon::Fire()
+{
+	UE_LOG(LogBaseWeapon, Display, TEXT("FIRE!!!!!!!"));
 }

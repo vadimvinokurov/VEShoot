@@ -7,9 +7,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/VESCharacterMovementComponent.h"
 #include "Components/VESHealthComponent.h"
+#include "Components/VESWeaponComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
-#include "Weapon/VESBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
@@ -25,8 +25,6 @@ AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SocketOffset = FVector(0.0f, 100.0f, 80.0f);
 	SpringArmComponent->TargetArmLength = 400.0f;
-	
-
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
@@ -36,6 +34,8 @@ AVESBaseCharacter::AVESBaseCharacter(const FObjectInitializer& ObjInit)
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
 	HealthTextComponent->SetOwnerNoSee(true);
+
+	WeaponComponent = CreateDefaultSubobject<UVESWeaponComponent>("WeaponComponent");
 }
 
 // Called when the game starts or when spawned
@@ -51,8 +51,6 @@ void AVESBaseCharacter::BeginPlay()
 	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &AVESBaseCharacter::OnHealthChanged);
 	LandedDelegate.AddDynamic(this, &AVESBaseCharacter::OnGroundLanded);
-
-	SpawnWeapon();
 }
 
 void AVESBaseCharacter::OnGroundLanded(const FHitResult& Hit)
@@ -60,8 +58,7 @@ void AVESBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 	const auto FallVelocityZ = -GetCharacterMovement()->Velocity.Z;
 	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
 
-	if (FallVelocityZ < LandedDamageVelocity.X)
-		return;
+	if (FallVelocityZ < LandedDamageVelocity.X) return;
 	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
 	UE_LOG(BaseCharacterLog, Display, TEXT("FallVelocityZ: %f"), FallVelocityZ);
 	TakeDamage(FinalDamage, FDamageEvent(), nullptr, nullptr);
@@ -77,6 +74,10 @@ void AVESBaseCharacter::Tick(float DeltaTime)
 void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	check(PlayerInputComponent);
+	check(WeaponComponent);
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVESBaseCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVESBaseCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &AVESBaseCharacter::AddControllerPitchInput);
@@ -85,6 +86,8 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AVESBaseCharacter::OnStartRunning);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AVESBaseCharacter::OnStopRunning);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UVESWeaponComponent::Fire);
 }
 
 bool AVESBaseCharacter::IsRunning() const
@@ -94,8 +97,7 @@ bool AVESBaseCharacter::IsRunning() const
 
 float AVESBaseCharacter::GetMovementDirection() const
 {
-	if (GetVelocity().IsZero())
-		return 0.0f;
+	if (GetVelocity().IsZero()) return 0.0f;
 
 	const auto VelocityNormal = GetVelocity().GetSafeNormal();
 	const auto AngularBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
@@ -106,16 +108,14 @@ float AVESBaseCharacter::GetMovementDirection() const
 
 void AVESBaseCharacter::MoveForward(float Amount)
 {
-	if (Amount == 0.0f)
-		return;
+	if (Amount == 0.0f) return;
 	IsMovingForward = Amount > 0.0f;
 	AddMovementInput(GetActorForwardVector(), Amount);
 }
 
 void AVESBaseCharacter::MoveRight(float Amount)
 {
-	if (Amount == 0.0f)
-		return;
+	if (Amount == 0.0f) return;
 	AddMovementInput(GetActorRightVector(), Amount);
 }
 
@@ -146,17 +146,5 @@ void AVESBaseCharacter::OnDeath()
 	if (Controller)
 	{
 		Controller->ChangeState(NAME_Spectating);
-	}
-}
-
-void AVESBaseCharacter::SpawnWeapon() {
-	if (!GetWorld())
-		return;
-
-	const auto Weapon = GetWorld()->SpawnActor<AVESBaseWeapon>(WeaponClass);
-	if (Weapon)
-	{
-		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-		Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
 	}
 }

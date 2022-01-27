@@ -10,7 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UVESHealthComponent;
 class UTextRenderComponent;
-class AVESBaseWeapon;
+class UVESWeaponComponent;
 
 UCLASS()
 class VESHOOT_API AVESBaseCharacter : public ACharacter
@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UTextRenderComponent* HealthTextComponent;
 
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UVESWeaponComponent* WeaponComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* DeapthAnimMotage;
 
@@ -45,9 +48,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	FVector2D LandedDamage = FVector2D(10.f, 100.0f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TSubclassOf<AVESBaseWeapon> WeaponClass;
 
 public:
 	// Called every frame
@@ -77,6 +77,4 @@ private:
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);
-
-	void SpawnWeapon();
 };
