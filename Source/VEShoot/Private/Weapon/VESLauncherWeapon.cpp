@@ -11,7 +11,7 @@ void AVESLauncherWeapon::StartFire()
 
 void AVESLauncherWeapon::MakeShot() 
 {
-	if (!GetWorld()) return;
+	if (!GetWorld() || IsAmmoEmpty()) return;
 
 	FVector TraceStart;
 	FVector TraceEnd;
@@ -32,5 +32,5 @@ void AVESLauncherWeapon::MakeShot()
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 	// set projectile params
-
+	DecreaseAmmo();
 }
