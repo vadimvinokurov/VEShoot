@@ -91,6 +91,8 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &UVESWeaponComponent::StopFire);
 
 	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &UVESWeaponComponent::NextWeapon);
+
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &UVESWeaponComponent::Reload);
 }
 
 bool AVESBaseCharacter::IsRunning() const

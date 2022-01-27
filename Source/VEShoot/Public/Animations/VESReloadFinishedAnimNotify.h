@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Animations/VESAnimNotify.h"
-#include "VESEquipFinishedAnimNotify.generated.h"
+#include "VESReloadFinishedAnimNotify.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class VESHOOT_API UVESEquipFinishedAnimNotify : public UVESAnimNotify
+class VESHOOT_API UVESReloadFinishedAnimNotify : public UVESAnimNotify
 {
 	GENERATED_BODY()
-
-
+	
 };

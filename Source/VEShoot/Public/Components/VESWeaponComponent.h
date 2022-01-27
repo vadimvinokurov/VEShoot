@@ -8,6 +8,18 @@
 
 class AVESBaseWeapon;
 
+USTRUCT(BlueprintType)
+struct FWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<AVESBaseWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	UAnimMontage* ReloadAnimMontage;
+};
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VESHOOT_API UVESWeaponComponent : public UActorComponent
 {
@@ -19,10 +31,11 @@ public:
 	void StartFire();
 	void StopFire();
 	void NextWeapon();
+	void Reload();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TArray<TSubclassOf<AVESBaseWeapon>> WeaponClasses;
+	TArray<FWeaponData> WeaponData;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FName WeaponEquipSocketName = "WeaponSocket";
@@ -43,16 +56,37 @@ private:
 	UPROPERTY()
 	TArray<AVESBaseWeapon*> Weapons;
 
+	UPROPERTY()
+	UAnimMontage* CurrentReloadAnimMontage = nullptr;
+
 	int32 CurrentWeaponIndex = 0;
 	bool EquipAnimInProgress = false;
+	bool ReloadAnimInProgress = false;
 
+	void InitAnimation();
 	void SpawnWeapons();
 	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 	void EquipWeapon(int32 WeaponIndex);
 
 	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
-	void InitAnimation();
+
 	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+	void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
+
 	bool CanEquip() const;
 	bool CanFire() const;
+	bool CanReload() const;
+
+	template <typename T>
+	T* FindNotifyByClass(UAnimSequenceBase* Animation)
+	{
+		if (!Animation) return nullptr;
+		const auto NotifyEvents = Animation->Notifies;
+		for (auto NotifyEvent : NotifyEvents)
+		{
+			auto AnimationNotify = Cast<T>(NotifyEvent.Notify);
+			if (AnimationNotify) return AnimationNotify;
+		}
+		return nullptr;
+	}
 };
