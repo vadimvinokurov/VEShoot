@@ -17,7 +17,8 @@ class VESHOOT_API UVESWeaponComponent : public UActorComponent
 public:	
 	UVESWeaponComponent();
 
-	void Fire();
+	void StartFire();
+	void StopFire();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")

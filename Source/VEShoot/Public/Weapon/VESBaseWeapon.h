@@ -16,7 +16,8 @@ class VESHOOT_API AVESBaseWeapon : public AActor
 public:
 	AVESBaseWeapon();
 
-	virtual void Fire();
+	virtual void StartFire();
+	virtual void StopFire();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -31,14 +32,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float DamageAmount = 10;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float TimeBetweenShots = 0.3f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float BulletSpread = 1.5f;
+
 	virtual void BeginPlay() override;
 
 private:
+	FTimerHandle ShotTimerHandle;
+
 	APlayerController* AVESBaseWeapon::GetPlayerController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 	FVector GetMuzzleWorldLocation() const;
 	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeShot();
-	void MakeDamage(const FHitResult& HitResult);
+	void MakeDamage(const FHitResult& HitResult)
+		
+;
 };

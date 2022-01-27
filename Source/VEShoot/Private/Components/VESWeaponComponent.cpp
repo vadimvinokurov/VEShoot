@@ -29,9 +29,16 @@ void UVESWeaponComponent::SpawnWeapon()
 	CurrentWeapon->SetOwner(Character);
 }
 
-void UVESWeaponComponent::Fire()
+void UVESWeaponComponent::StartFire()
 {
 	if (!CurrentWeapon) return;
 
-	CurrentWeapon->Fire();
+	CurrentWeapon->StartFire();
+}
+
+void UVESWeaponComponent::StopFire()
+{
+	if (!CurrentWeapon) return;
+
+	CurrentWeapon->StopFire();
 }

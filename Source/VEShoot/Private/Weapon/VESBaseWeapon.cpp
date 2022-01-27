@@ -51,10 +51,15 @@ void AVESBaseWeapon::MakeShot()
 	}
 }
 
-void AVESBaseWeapon::Fire()
+void AVESBaseWeapon::StartFire()
 {
 	MakeShot();
-	UE_LOG(LogBaseWeapon, Display, TEXT("FIRE!!!!!!!"));
+	GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &AVESBaseWeapon::MakeShot, TimeBetweenShots, true);
+}
+
+void AVESBaseWeapon::StopFire() 
+{
+	GetWorldTimerManager().ClearTimer(ShotTimerHandle);
 }
 
 APlayerController* AVESBaseWeapon::GetPlayerController() const
@@ -86,7 +91,8 @@ bool AVESBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 	if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
 	TraceStart = ViewLocation;
-	const FVector ShootDirection = ViewRotation.Vector();
+	const auto HalfRad = FMath::DegreesToRadians(BulletSpread);
+	const FVector ShootDirection = FMath::VRandCone(ViewRotation.Vector(), HalfRad);
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
 	return true;

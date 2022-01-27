@@ -87,7 +87,8 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AVESBaseCharacter::OnStartRunning);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AVESBaseCharacter::OnStopRunning);
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UVESWeaponComponent::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UVESWeaponComponent::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &UVESWeaponComponent::StopFire);
 }
 
 bool AVESBaseCharacter::IsRunning() const
