@@ -44,6 +44,7 @@ private:
 	TArray<AVESBaseWeapon*> Weapons;
 
 	int32 CurrentWeaponIndex = 0;
+	bool EquipAnimInProgress = false;
 
 	void SpawnWeapons();
 	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
@@ -52,4 +53,6 @@ private:
 	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
 	void InitAnimation();
 	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+	bool CanEquip() const;
+	bool CanFire() const;
 };
