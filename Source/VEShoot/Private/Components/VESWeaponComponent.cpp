@@ -3,6 +3,9 @@
 #include "Components/VESWeaponComponent.h"
 #include "Weapon/VESBaseWeapon.h"
 #include "GameFramework/Character.h"
+#include "Animations/VESEquipFinishedAnimNotify.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
 UVESWeaponComponent::UVESWeaponComponent()
 {
@@ -13,6 +16,7 @@ void UVESWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentWeaponIndex = 0;
+	InitAnimation();
 	SpawnWeapons();
 	EquipWeapon(CurrentWeaponIndex);
 }
@@ -68,6 +72,7 @@ void UVESWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	CurrentWeapon = Weapons[WeaponIndex];
 
 	AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponEquipSocketName);
+	PlayAnimMontage(EquipAnimMontage);
 }
 
 void UVESWeaponComponent::StartFire()
@@ -88,4 +93,36 @@ void UVESWeaponComponent::NextWeapon()
 {
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
+}
+
+void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character) return;
+
+	Character->PlayAnimMontage(Animation);
+}
+
+void UVESWeaponComponent::InitAnimation()
+{
+	if (!EquipAnimMontage) return;
+	const auto NotifyEvents = EquipAnimMontage->Notifies;
+	for (auto NotifyEvent : NotifyEvents)
+	{
+		auto EquipFinishedNotify = Cast<UVESEquipFinishedAnimNotify>(NotifyEvent.Notify);
+		if (EquipFinishedNotify)
+		{
+			EquipFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnEquipFinished);
+			break;
+		}
+	}
+}
+
+void UVESWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character) return;
+
+	if (Character->GetMesh() == MeshComponent)
+		UE_LOG(LogWeaponComponent, Display, TEXT("OnEquipFinished"));
 }

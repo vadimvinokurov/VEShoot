@@ -17,7 +17,7 @@ public:
 	UVESWeaponComponent();
 
 	void StartFire();
-	void StopFire(); 
+	void StopFire();
 	void NextWeapon();
 
 protected:
@@ -29,6 +29,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FName WeaponArmorySocketName = "ArmorySocket";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UAnimMontage* EquipAnimMontage;
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
@@ -43,7 +46,10 @@ private:
 	int32 CurrentWeaponIndex = 0;
 
 	void SpawnWeapons();
-
 	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 	void EquipWeapon(int32 WeaponIndex);
+
+	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
+	void InitAnimation();
+	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
 };
