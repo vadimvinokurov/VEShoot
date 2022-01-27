@@ -6,31 +6,44 @@
 #include "Components/ActorComponent.h"
 #include "VESWeaponComponent.generated.h"
 
-
 class AVESBaseWeapon;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VESHOOT_API UVESWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UVESWeaponComponent();
 
 	void StartFire();
-	void StopFire();
+	void StopFire(); 
+	void NextWeapon();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TSubclassOf<AVESBaseWeapon> WeaponClass;
+	TArray<TSubclassOf<AVESBaseWeapon>> WeaponClasses;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	FName WeaponAttachPointName = "WeaponSocket";
+	FName WeaponEquipSocketName = "WeaponSocket";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	FName WeaponArmorySocketName = "ArmorySocket";
 
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 private:
 	UPROPERTY()
 	AVESBaseWeapon* CurrentWeapon = nullptr;
-	void SpawnWeapon();
+
+	UPROPERTY()
+	TArray<AVESBaseWeapon*> Weapons;
+
+	int32 CurrentWeaponIndex = 0;
+
+	void SpawnWeapons();
+
+	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
+	void EquipWeapon(int32 WeaponIndex);
 };

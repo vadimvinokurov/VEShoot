@@ -89,6 +89,8 @@ void AVESBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UVESWeaponComponent::StartFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &UVESWeaponComponent::StopFire);
+
+	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &UVESWeaponComponent::NextWeapon);
 }
 
 bool AVESBaseCharacter::IsRunning() const
@@ -149,4 +151,5 @@ void AVESBaseCharacter::OnDeath()
 		Controller->ChangeState(NAME_Spectating);
 	}
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	WeaponComponent->StopFire();
 }
