@@ -3,9 +3,11 @@
 #include "VESGameModeBase.h"
 #include "Player/VESBaseCharacter.h"
 #include "Player/VESPlayerController.h"
+#include "UI/VESGameHUD.h"
 
 AVESGameModeBase::AVESGameModeBase()
 {
 	DefaultPawnClass = AVESBaseCharacter::StaticClass();
 	PlayerControllerClass = AVESPlayerController::StaticClass();
+	HUDClass = AVESGameHUD::StaticClass();
 };
