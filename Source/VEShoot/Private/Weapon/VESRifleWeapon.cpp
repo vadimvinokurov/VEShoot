@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Weapon/VESRifleWeapon.h"
 #include "DrawDebugHelpers.h"
 
@@ -40,7 +39,6 @@ void AVESRifleWeapon::MakeShot()
 	}
 }
 
-
 bool AVESRifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 {
 	FVector ViewLocation;
@@ -53,4 +51,12 @@ bool AVESRifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
 	return true;
+}
+
+void AVESRifleWeapon::MakeDamage(const FHitResult& HitResult)
+{
+	const auto DamageActor = HitResult.GetActor();
+	if (!DamageActor) return;
+
+	DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }

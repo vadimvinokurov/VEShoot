@@ -29,9 +29,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float TraceMaxDistance = 1500.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	float DamageAmount = 10;
-
 	virtual void BeginPlay() override;
 
 	virtual void MakeShot();
@@ -41,5 +38,4 @@ protected:
 	FVector GetMuzzleWorldLocation() const;
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
-	void MakeDamage(const FHitResult& HitResult);
 };

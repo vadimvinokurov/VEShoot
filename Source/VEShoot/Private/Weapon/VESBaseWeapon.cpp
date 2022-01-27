@@ -24,18 +24,11 @@ void AVESBaseWeapon::BeginPlay()
 	check(WeaponMesh);
 }
 
-void AVESBaseWeapon::MakeShot()
-{
-}
+void AVESBaseWeapon::MakeShot() {}
 
-void AVESBaseWeapon::StartFire()
-{
-}
+void AVESBaseWeapon::StartFire() {}
 
-void AVESBaseWeapon::StopFire() 
-{
-
-}
+void AVESBaseWeapon::StopFire() {}
 
 APlayerController* AVESBaseWeapon::GetPlayerController() const
 {
@@ -78,12 +71,4 @@ void AVESBaseWeapon::MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(GetOwner());
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
-}
-
-void AVESBaseWeapon::MakeDamage(const FHitResult& HitResult)
-{
-	const auto DamageActor = HitResult.GetActor();
-	if (!DamageActor) return;
-
-	DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }

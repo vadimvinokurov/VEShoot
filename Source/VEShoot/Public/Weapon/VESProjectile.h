@@ -24,14 +24,32 @@ public:
 	}
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USphereComponent* CollisionComponent;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	UProjectileMovementComponent* MovementComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float DamageRadius = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float DamageAmount = 50.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	bool DoFullDamage = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float LifeSeconds = 50.f;
 
 	virtual void BeginPlay() override;
 
 private:
 	FVector ShotDirection;
+
+	UFUNCTION()
+	void OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+		const FHitResult& Hit);
+
+	AController* GetController() const;
 };
