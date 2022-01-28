@@ -4,26 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "VESCoreTypes.h"
+
 #include "VESBaseWeapon.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
-
 class USkeletalMeshComponent;
-
-USTRUCT(BlueprintType)
-struct FAmmoData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	int32 Bullets;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (EditConsition = "|Infinite|"))
-	int32 Clips;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	bool Infinite;
-};
 
 UCLASS()
 class VESHOOT_API AVESBaseWeapon : public AActor

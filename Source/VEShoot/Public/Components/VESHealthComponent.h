@@ -2,12 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "VESCoreTypes.h"
+
 #include "VESHealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
-
-	UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class VESHOOT_API UVESHealthComponent : public UActorComponent
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class VESHOOT_API UVESHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

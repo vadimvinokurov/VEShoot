@@ -5,8 +5,11 @@
 #include "GameFramework/Character.h"
 #include "Animations/VESEquipFinishedAnimNotify.h"
 #include "Animations/VESReloadFinishedAnimNotify.h"
+#include "Animations/VESAnimUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
+
+constexpr static int32 WeaponNum = 2;
 
 UVESWeaponComponent::UVESWeaponComponent()
 {
@@ -16,6 +19,9 @@ UVESWeaponComponent::UVESWeaponComponent()
 void UVESWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	checkf(WeaponData.Num() == WeaponNum, TEXT("Our character can hold only 2 weapon items"));
+
 	CurrentWeaponIndex = 0;
 	InitAnimation();
 	SpawnWeapons();
@@ -110,11 +116,6 @@ void UVESWeaponComponent::NextWeapon()
 	EquipWeapon(CurrentWeaponIndex);
 }
 
-void UVESWeaponComponent::Reload()
-{
-	ChangedClip();
-}
-
 void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -125,16 +126,25 @@ void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void UVESWeaponComponent::InitAnimation()
 {
-	auto EquipFinishedNotify = FindNotifyByClass<UVESEquipFinishedAnimNotify>(EquipAnimMontage);
+	auto EquipFinishedNotify = AnimUtils::FindNotifyByClass<UVESEquipFinishedAnimNotify>(EquipAnimMontage);
 	if (EquipFinishedNotify)
 	{
 		EquipFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnEquipFinished);
 	}
+	else
+	{
+		UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
+		checkNoEntry();
+	}
 
 	for (auto OneWeaponData : WeaponData)
 	{
-		auto ReloadFinishedNotify = FindNotifyByClass<UVESReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
-		if (!ReloadFinishedNotify) continue;
+		auto ReloadFinishedNotify = AnimUtils::FindNotifyByClass<UVESReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		if (!ReloadFinishedNotify)
+		{
+			UE_LOG(LogWeaponComponent, Error, TEXT("Reload anim notify is forgotten to set"));
+			checkNoEntry();
+		}
 
 		ReloadFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnReloadFinished);
 	}
@@ -178,6 +188,7 @@ void UVESWeaponComponent::OnEmptyClip()
 {
 	ChangedClip();
 }
+
 void UVESWeaponComponent::ChangedClip()
 {
 	if (!CanReload()) return;
@@ -186,4 +197,9 @@ void UVESWeaponComponent::ChangedClip()
 
 	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimMontage);
+}
+
+void UVESWeaponComponent::Reload()
+{
+	ChangedClip();
 }

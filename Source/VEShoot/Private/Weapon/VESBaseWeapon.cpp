@@ -22,6 +22,8 @@ void AVESBaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	check(WeaponMesh);
+	checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets count couldn't be less or equal zero"));
+	checkf(DefaultAmmo.Clips > 0, TEXT("Clips count couldn't be less or equal zero"));
 
 	CurrentAmmo = DefaultAmmo;
 }
@@ -92,15 +94,17 @@ void AVESBaseWeapon::DecreaseAmmo()
 	}
 }
 
+bool AVESBaseWeapon::IsClipEmpty() const
+{
+	return CurrentAmmo.Bullets == 0;
+}
+
 bool AVESBaseWeapon::IsAmmoEmpty() const
 {
 	return !CurrentAmmo.Infinite && CurrentAmmo.Clips == 0 && IsClipEmpty();
 }
 
-bool AVESBaseWeapon::IsClipEmpty() const
-{
-	return CurrentAmmo.Bullets == 0;
-}
+
 
 void AVESBaseWeapon::ChangedClip()
 {

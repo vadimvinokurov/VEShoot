@@ -4,21 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "VESCoreTypes.h"
+
 #include "VESWeaponComponent.generated.h"
 
 class AVESBaseWeapon;
-
-USTRUCT(BlueprintType)
-struct FWeaponData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	TSubclassOf<AVESBaseWeapon> WeaponClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	UAnimMontage* ReloadAnimMontage;
-};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VESHOOT_API UVESWeaponComponent : public UActorComponent
@@ -80,16 +70,5 @@ private:
 	void OnEmptyClip();
 	void ChangedClip();
 
-	template <typename T>
-	T* FindNotifyByClass(UAnimSequenceBase* Animation)
-	{
-		if (!Animation) return nullptr;
-		const auto NotifyEvents = Animation->Notifies;
-		for (auto NotifyEvent : NotifyEvents)
-		{
-			auto AnimationNotify = Cast<T>(NotifyEvent.Notify);
-			if (AnimationNotify) return AnimationNotify;
-		}
-		return nullptr;
-	}
+
 };
