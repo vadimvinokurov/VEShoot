@@ -13,8 +13,11 @@ UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class VESHOO
 public:
 	UVESHealthComponent();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetHealth() const { return Health; }
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetHealthProcent() const { return Health / MaxHealth; }
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return FMath::IsNearlyZero(Health); }
