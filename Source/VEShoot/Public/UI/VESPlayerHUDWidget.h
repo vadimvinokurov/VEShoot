@@ -20,5 +20,8 @@ public:
 	float GetHealthPrecent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	bool GetWeaponUIData(FWeaponUIData& UIData) const;
+	bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool GetCurrentAmmoData(FAmmoData& AmmoData) const;
 };

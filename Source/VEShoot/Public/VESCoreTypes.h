@@ -12,13 +12,13 @@ struct FAmmoData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	int32 Bullets;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (EditConsition = "|Infinite|"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (EditConsition = "|Infinite|"))
 	int32 Clips;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	bool Infinite;
 };
 

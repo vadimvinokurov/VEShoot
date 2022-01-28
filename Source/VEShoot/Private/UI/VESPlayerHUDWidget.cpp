@@ -15,7 +15,7 @@ float UVESPlayerHUDWidget::GetHealthPrecent() const
 	return HealthComponent->GetHealthProcent();
 }
 
-bool UVESPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData) const
+bool UVESPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 {
 	const auto Player = GetOwningPlayerPawn();
 	if (!Player) return false;
@@ -24,4 +24,15 @@ bool UVESPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData) const
 	if (!WeaponComponent) return false;
 
 	return WeaponComponent->GetWeaponUIData(UIData);
+}
+
+bool UVESPlayerHUDWidget::GetCurrentAmmoData(FAmmoData& AmmoData) const
+{
+	const auto Player = GetOwningPlayerPawn();
+	if (!Player) return false;
+	const auto Component = Player->GetComponentByClass(UVESWeaponComponent::StaticClass());
+	const auto WeaponComponent = Cast<UVESWeaponComponent>(Component);
+	if (!WeaponComponent) return false;
+
+	return WeaponComponent->GetAmmoData(AmmoData);
 }

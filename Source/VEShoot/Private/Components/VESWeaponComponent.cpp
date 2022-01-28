@@ -213,3 +213,13 @@ bool UVESWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
 	}
 	return false;
 }
+
+bool UVESWeaponComponent::GetAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoDate();
+		return true;
+	}
+	return false;
+}

@@ -28,6 +28,8 @@ public:
 
 	FWeaponUIData GetUIDate() const { return UIData; }
 
+	FAmmoData GetAmmoDate() const { return CurrentAmmo; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
