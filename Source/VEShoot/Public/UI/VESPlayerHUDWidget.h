@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "VESCoreTypes.h"
 #include "VESPlayerHUDWidget.generated.h"
 
 /**
@@ -17,4 +18,7 @@ class VESHOOT_API UVESPlayerHUDWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	float GetHealthPrecent() const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 };

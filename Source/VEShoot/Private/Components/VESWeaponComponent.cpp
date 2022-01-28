@@ -203,3 +203,13 @@ void UVESWeaponComponent::Reload()
 {
 	ChangedClip();
 }
+
+bool UVESWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUIDate();
+		return true;
+	}
+	return false;
+}

@@ -2,6 +2,7 @@
 
 #include "UI/VESPlayerHUDWidget.h"
 #include "Components/VESHealthComponent.h"
+#include "Components/VESWeaponComponent.h"
 
 float UVESPlayerHUDWidget::GetHealthPrecent() const
 {
@@ -12,4 +13,15 @@ float UVESPlayerHUDWidget::GetHealthPrecent() const
 
 	if (!HealthComponent) return 0.0f;
 	return HealthComponent->GetHealthProcent();
+}
+
+bool UVESPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	const auto Player = GetOwningPlayerPawn();
+	if (!Player) return false;
+	const auto Component = Player->GetComponentByClass(UVESWeaponComponent::StaticClass());
+	const auto WeaponComponent = Cast<UVESWeaponComponent>(Component);
+	if (!WeaponComponent) return false;
+
+	return WeaponComponent->GetWeaponUIData(UIData);
 }
