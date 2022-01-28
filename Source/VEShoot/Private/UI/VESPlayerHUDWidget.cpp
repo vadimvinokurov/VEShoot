@@ -3,13 +3,11 @@
 #include "UI/VESPlayerHUDWidget.h"
 #include "Components/VESHealthComponent.h"
 #include "Components/VESWeaponComponent.h"
+#include "VESUtils.h"
 
 float UVESPlayerHUDWidget::GetHealthPrecent() const
 {
-	const auto Player = GetOwningPlayerPawn();
-	if (!Player) return 0.0f;
-	const auto Component = Player->GetComponentByClass(UVESHealthComponent::StaticClass());
-	const auto HealthComponent = Cast<UVESHealthComponent>(Component);
+	const auto HealthComponent = VESUtils::GetVESPlayerComponent<UVESHealthComponent>(GetOwningPlayerPawn());
 
 	if (!HealthComponent) return 0.0f;
 	return HealthComponent->GetHealthProcent();
@@ -17,10 +15,7 @@ float UVESPlayerHUDWidget::GetHealthPrecent() const
 
 bool UVESPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 {
-	const auto Player = GetOwningPlayerPawn();
-	if (!Player) return false;
-	const auto Component = Player->GetComponentByClass(UVESWeaponComponent::StaticClass());
-	const auto WeaponComponent = Cast<UVESWeaponComponent>(Component);
+	const auto WeaponComponent = VESUtils::GetVESPlayerComponent<UVESWeaponComponent>(GetOwningPlayerPawn());
 	if (!WeaponComponent) return false;
 
 	return WeaponComponent->GetWeaponUIData(UIData);
@@ -28,11 +23,20 @@ bool UVESPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 
 bool UVESPlayerHUDWidget::GetCurrentAmmoData(FAmmoData& AmmoData) const
 {
-	const auto Player = GetOwningPlayerPawn();
-	if (!Player) return false;
-	const auto Component = Player->GetComponentByClass(UVESWeaponComponent::StaticClass());
-	const auto WeaponComponent = Cast<UVESWeaponComponent>(Component);
+	const auto WeaponComponent = VESUtils::GetVESPlayerComponent<UVESWeaponComponent>(GetOwningPlayerPawn());
 	if (!WeaponComponent) return false;
 
 	return WeaponComponent->GetAmmoData(AmmoData);
+}
+
+bool UVESPlayerHUDWidget::IsPlayerAliver() const
+{
+	const auto HealthComponent = VESUtils::GetVESPlayerComponent<UVESHealthComponent>(GetOwningPlayerPawn());
+	return HealthComponent && !HealthComponent->IsDead();
+}
+
+bool UVESPlayerHUDWidget::IsPlayerSpecating() const
+{
+	const auto Controller = GetOwningPlayer();
+	return Controller && Controller->GetStateName() == NAME_Spectating;
 }

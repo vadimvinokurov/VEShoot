@@ -163,6 +163,7 @@ void UVESWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (!Character || Character->GetMesh() != MeshComponent) return;
 
+	CurrentWeapon->ChangedClip();
 	ReloadAnimInProgress = false;
 }
 
@@ -193,7 +194,6 @@ void UVESWeaponComponent::ChangedClip()
 {
 	if (!CanReload()) return;
 	CurrentWeapon->StopFire();
-	CurrentWeapon->ChangedClip();
 
 	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimMontage);

@@ -5,11 +5,9 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "VESCoreTypes.h"
+
 #include "VESPlayerHUDWidget.generated.h"
 
-/**
- *
- */
 UCLASS()
 class VESHOOT_API UVESPlayerHUDWidget : public UUserWidget
 {
@@ -24,4 +22,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	bool GetCurrentAmmoData(FAmmoData& AmmoData) const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool IsPlayerAliver() const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool IsPlayerSpecating() const;
 };
