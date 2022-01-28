@@ -17,6 +17,12 @@ class VESHOOT_API AVESGameHUD : public AHUD
 public:
 	virtual void DrawHUD() override;
 
-	private:
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+
+	virtual void BeginPlay() override;
+
+private:
 	void DrawCrossHair();
 };
