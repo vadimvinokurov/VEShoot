@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Pickups/VESBasePickup.h"
 #include "Components/SphereComponent.h"
 
@@ -9,7 +8,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
 // Sets default values
 AVESBasePickup::AVESBasePickup()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
@@ -24,6 +23,8 @@ void AVESBasePickup::BeginPlay()
 {
 	Super::BeginPlay();
 	check(CollisionComponent);
+
+	GenerateRotationYaw();
 }
 
 // Called every frame
@@ -31,6 +32,7 @@ void AVESBasePickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
 }
 
 void AVESBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -43,7 +45,6 @@ void AVESBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 		PickupWasTaken();
 	}
 }
-
 
 bool AVESBasePickup::GivePickupTo(APawn* PlayerPawn)
 {
@@ -61,11 +62,18 @@ void AVESBasePickup::PickupWasTaken()
 	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &AVESBasePickup::Respawn, RespawnTime);
 }
 
-void AVESBasePickup::Respawn() 
+void AVESBasePickup::Respawn()
 {
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	if (GetRootComponent())
 	{
 		GetRootComponent()->SetVisibility(true, true);
 	}
+	GenerateRotationYaw();
+}
+
+void AVESBasePickup::GenerateRotationYaw()
+{
+	const auto Direction = FMath::RandBool() ? 1 : -1;
+	RotationYaw = FMath::RandRange(1.0f, 2.0f) * Direction;
 }

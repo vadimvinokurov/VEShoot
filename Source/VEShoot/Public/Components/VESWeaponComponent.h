@@ -73,6 +73,6 @@ private:
 	bool CanFire() const;
 	bool CanReload() const;
 
-	void OnEmptyClip();
+	void OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon);
 	void ChangedClip();
 };

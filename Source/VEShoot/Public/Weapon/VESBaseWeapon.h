@@ -62,7 +62,6 @@ protected:
 	void DecreaseAmmo();
 	bool IsAmmoEmpty() const;
 	bool IsAmmoFull() const;
-	void LogAmmo();
 
 private:
 	FAmmoData CurrentAmmo{15, 10, false};

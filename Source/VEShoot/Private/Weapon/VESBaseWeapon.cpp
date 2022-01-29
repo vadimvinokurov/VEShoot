@@ -89,18 +89,18 @@ void AVESBaseWeapon::DecreaseAmmo()
 	if (IsClipEmpty() && !IsAmmoEmpty())
 	{
 		StopFire();
-		OnClipEmpty.Broadcast();
+		OnClipEmpty.Broadcast(this);
 	}
 }
 
 bool AVESBaseWeapon::IsClipEmpty() const
 {
-	UE_LOG(LogBaseWeapon, Warning, TEXT("IsClipEmpty(), clips: %d, name: %s"), CurrentAmmo.Bullets, *GetName());
 	return CurrentAmmo.Bullets == 0;
 }
 
 bool AVESBaseWeapon::IsAmmoEmpty() const
 {
+
 	return !CurrentAmmo.Infinite && CurrentAmmo.Clips == 0 && IsClipEmpty();
 }
 
@@ -111,20 +111,11 @@ void AVESBaseWeapon::ChangedClip()
 	{
 		if (CurrentAmmo.Clips == 0)
 		{
-			UE_LOG(LogBaseWeapon, Warning, TEXT("No more clips"));
 			return;
 		}
 		CurrentAmmo.Clips--;
 	}
 	CurrentAmmo.Bullets = DefaultAmmo.Bullets;
-	UE_LOG(LogBaseWeapon, Display, TEXT("------- Changed Clip ----------"));
-}
-
-void AVESBaseWeapon::LogAmmo()
-{
-	FString AmmoInfo = "Ammo: " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
-	AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
-	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }
 
 bool AVESBaseWeapon::CanReload() const
@@ -143,8 +134,9 @@ bool AVESBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 
 	if (IsAmmoEmpty())
 	{
-		CurrentAmmo.Clips = FMath::Clamp(CurrentAmmo.Clips + ClipsAmount, 0, DefaultAmmo.Clips + 1);
-		OnClipEmpty.Broadcast();
+		UE_LOG(LogBaseWeapon, Error, TEXT("BaseWeapon name: %s"), *(GetName()));
+		CurrentAmmo.Clips = FMath::Clamp(ClipsAmount, 0, DefaultAmmo.Clips + 1);
+		OnClipEmpty.Broadcast(this);
 	}
 	else if (CurrentAmmo.Clips < DefaultAmmo.Clips)
 	{

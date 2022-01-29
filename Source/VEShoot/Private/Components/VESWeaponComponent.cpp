@@ -52,7 +52,7 @@ void UVESWeaponComponent::SpawnWeapons()
 	{
 		auto Weapon = GetWorld()->SpawnActor<AVESBaseWeapon>(OneWeaponData.WeaponClass);
 		if (!Weapon) continue;
-		Weapon->OnClipEmpty.AddUObject(this, &UVESWeaponComponent::OnEmptyClip);
+		Weapon->OnClipEmpty.AddUObject(this, &UVESWeaponComponent::OnClipEmpty);
 		Weapon->SetOwner(Character);
 		Weapons.Add(Weapon);
 
@@ -115,7 +115,6 @@ void UVESWeaponComponent::NextWeapon()
 	if (!CanEquip()) return;
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
-	UE_LOG(LogWeaponComponent, Error, TEXT("Start equip CurrentWeapon name: %s"), *(CurrentWeapon->GetName()));
 }
 
 void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
@@ -158,10 +157,10 @@ void UVESWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 	if (!Character || Character->GetMesh() != MeshComponent) return;
 
 	EquipAnimInProgress = false;
-	UE_LOG(LogWeaponComponent, Error, TEXT("CurrentWeapon name: %s"), *(CurrentWeapon->GetName()));
+
 	if (CurrentWeapon->IsClipEmpty())
 	{
-		ChangedClip();
+		Reload();
 	}
 }
 
@@ -192,9 +191,12 @@ bool UVESWeaponComponent::CanReload() const
 		   CurrentWeapon->CanReload();
 }
 
-void UVESWeaponComponent::OnEmptyClip()
+void UVESWeaponComponent::OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon)
 {
-	ChangedClip();
+	if (CurrentWeapon == AmmoEmptyWeapon)
+	{
+		ChangedClip();
+	}
 }
 
 void UVESWeaponComponent::ChangedClip()
