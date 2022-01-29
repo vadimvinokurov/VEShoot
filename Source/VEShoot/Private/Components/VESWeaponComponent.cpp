@@ -6,6 +6,7 @@
 #include "Animations/VESEquipFinishedAnimNotify.h"
 #include "Animations/VESReloadFinishedAnimNotify.h"
 #include "Animations/VESAnimUtils.h"
+#include "VESUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
@@ -114,6 +115,7 @@ void UVESWeaponComponent::NextWeapon()
 	if (!CanEquip()) return;
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
+	UE_LOG(LogWeaponComponent, Error, TEXT("Start equip CurrentWeapon name: %s"), *(CurrentWeapon->GetName()));
 }
 
 void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
@@ -156,6 +158,11 @@ void UVESWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 	if (!Character || Character->GetMesh() != MeshComponent) return;
 
 	EquipAnimInProgress = false;
+	UE_LOG(LogWeaponComponent, Error, TEXT("CurrentWeapon name: %s"), *(CurrentWeapon->GetName()));
+	if (CurrentWeapon->IsClipEmpty())
+	{
+		ChangedClip();
+	}
 }
 
 void UVESWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
@@ -221,5 +228,18 @@ bool UVESWeaponComponent::GetAmmoData(FAmmoData& AmmoData) const
 		AmmoData = CurrentWeapon->GetAmmoDate();
 		return true;
 	}
+	return false;
+}
+
+bool UVESWeaponComponent::TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, int32 ClipsAmount)
+{
+	for (const auto Weapon : Weapons)
+	{
+		if (Weapon && Weapon->IsA(WeaponType))
+		{
+			return Weapon->TryToAddAmmo(ClipsAmount);
+		}
+	}
+
 	return false;
 }

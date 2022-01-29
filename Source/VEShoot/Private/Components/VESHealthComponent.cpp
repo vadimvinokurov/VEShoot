@@ -12,6 +12,14 @@ UVESHealthComponent::UVESHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+bool UVESHealthComponent::TryToAddHealth(float HealthAmount)
+{
+	if (IsHealthFull()) return false;
+
+	SetHealth(Health + HealthAmount);
+	return true;
+}
+
 // Called when the game starts
 void UVESHealthComponent::BeginPlay()
 {

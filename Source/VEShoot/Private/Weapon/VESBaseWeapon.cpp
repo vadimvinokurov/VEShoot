@@ -95,6 +95,7 @@ void AVESBaseWeapon::DecreaseAmmo()
 
 bool AVESBaseWeapon::IsClipEmpty() const
 {
+	UE_LOG(LogBaseWeapon, Warning, TEXT("IsClipEmpty(), clips: %d, name: %s"), CurrentAmmo.Bullets, *GetName());
 	return CurrentAmmo.Bullets == 0;
 }
 
@@ -103,11 +104,9 @@ bool AVESBaseWeapon::IsAmmoEmpty() const
 	return !CurrentAmmo.Infinite && CurrentAmmo.Clips == 0 && IsClipEmpty();
 }
 
-
-
 void AVESBaseWeapon::ChangedClip()
 {
-	
+
 	if (!CurrentAmmo.Infinite)
 	{
 		if (CurrentAmmo.Clips == 0)
@@ -128,7 +127,29 @@ void AVESBaseWeapon::LogAmmo()
 	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }
 
-bool AVESBaseWeapon::CanReload() const 
+bool AVESBaseWeapon::CanReload() const
 {
 	return CurrentAmmo.Bullets < DefaultAmmo.Bullets && CurrentAmmo.Clips > 0;
+}
+
+bool AVESBaseWeapon::IsAmmoFull() const
+{
+	return CurrentAmmo.Clips == DefaultAmmo.Clips;
+}
+
+bool AVESBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
+{
+	if (IsAmmoFull() || CurrentAmmo.Infinite || ClipsAmount <= 0) return false;
+
+	if (IsAmmoEmpty())
+	{
+		CurrentAmmo.Clips = FMath::Clamp(CurrentAmmo.Clips + ClipsAmount, 0, DefaultAmmo.Clips + 1);
+		OnClipEmpty.Broadcast();
+	}
+	else if (CurrentAmmo.Clips < DefaultAmmo.Clips)
+	{
+		CurrentAmmo.Clips = FMath::Clamp(CurrentAmmo.Clips + ClipsAmount, 0, DefaultAmmo.Clips);
+	}
+	
+	return true;
 }

@@ -16,7 +16,7 @@ void AVESRifleWeapon::StopFire()
 
 void AVESRifleWeapon::MakeShot()
 {
-	if (!GetWorld() || IsAmmoEmpty())
+	if (!GetWorld() || IsClipEmpty())
 	{
 		StopFire();
 		return;

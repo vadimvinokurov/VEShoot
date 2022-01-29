@@ -11,7 +11,7 @@ void AVESLauncherWeapon::StartFire()
 
 void AVESLauncherWeapon::MakeShot() 
 {
-	if (!GetWorld() || IsAmmoEmpty()) return;
+	if (!GetWorld() || IsClipEmpty()) return;
 
 	FVector TraceStart;
 	FVector TraceEnd;

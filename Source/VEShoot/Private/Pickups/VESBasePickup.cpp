@@ -23,7 +23,7 @@ AVESBasePickup::AVESBasePickup()
 void AVESBasePickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	check(CollisionComponent);
 }
 
 // Called every frame
@@ -37,7 +37,35 @@ void AVESBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	UE_LOG(LogBasePickup, Display, TEXT("Pickup was taken"));
-	Destroy();
+	const auto Pawn = Cast<APawn>(OtherActor);
+	if (GivePickupTo(Pawn))
+	{
+		PickupWasTaken();
+	}
 }
 
+
+bool AVESBasePickup::GivePickupTo(APawn* PlayerPawn)
+{
+	return false;
+}
+
+void AVESBasePickup::PickupWasTaken()
+{
+	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	if (GetRootComponent())
+	{
+		GetRootComponent()->SetVisibility(false, true);
+	}
+	FTimerHandle RespawnTimerHandle;
+	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &AVESBasePickup::Respawn, RespawnTime);
+}
+
+void AVESBasePickup::Respawn() 
+{
+	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	if (GetRootComponent())
+	{
+		GetRootComponent()->SetVisibility(true, true);
+	}
+}

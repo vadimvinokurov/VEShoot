@@ -22,6 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return FMath::IsNearlyZero(Health); }
 
+	bool TryToAddHealth(float HealthAmount);
+
 	FOnDeath OnDeath;
 	FOnHealthChanged OnHealthChanged;
 
@@ -55,4 +57,6 @@ private:
 	void OnAutoHeal();
 
 	void SetHealth(float NewHealth);
+
+	bool IsHealthFull() const { return Health == MaxHealth; }
 };
