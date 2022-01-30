@@ -48,7 +48,7 @@ void AVESBaseCharacter::BeginPlay()
 	check(GetCharacterMovement());
 	check(GetMesh());
 
-	OnHealthChanged(HealthComponent->GetHealth());
+	OnHealthChanged(HealthComponent->GetHealth(), 0.0f);
 	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &AVESBaseCharacter::OnHealthChanged);
 	LandedDelegate.AddDynamic(this, &AVESBaseCharacter::OnGroundLanded);
@@ -135,7 +135,7 @@ void AVESBaseCharacter::OnStopRunning()
 	WantsToRun = false;
 }
 
-void AVESBaseCharacter::OnHealthChanged(float Health)
+void AVESBaseCharacter::OnHealthChanged(float Health, float DeltaHealth)
 {
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }

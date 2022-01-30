@@ -73,7 +73,7 @@ private:
 
 	void OnDeath();
 	
-	void OnHealthChanged(float Health);
+	void OnHealthChanged(float Health, float DeltaHealth);
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);

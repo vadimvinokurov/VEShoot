@@ -40,3 +40,21 @@ bool UVESPlayerHUDWidget::IsPlayerSpecating() const
 	const auto Controller = GetOwningPlayer();
 	return Controller && Controller->GetStateName() == NAME_Spectating;
 }
+
+bool UVESPlayerHUDWidget::Initialize()
+{
+	const auto HealthComponent = VESUtils::GetVESPlayerComponent<UVESHealthComponent>(GetOwningPlayerPawn());
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddUObject(this, &UVESPlayerHUDWidget::OnHealthChange);
+	}
+	return Super::Initialize();
+}
+
+void UVESPlayerHUDWidget::OnHealthChange(float Health, float DeltaHealth)
+{
+	if (DeltaHealth < 0)
+	{
+		OnTakeDamage();
+	}
+}
