@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Weapon/Components/VESWeaponFXComponent.h"
+#include "Weapon/Components/VESProjectileFXTraceComponent.h"
 
 AVESProjectile::AVESProjectile()
 {
@@ -22,6 +23,8 @@ AVESProjectile::AVESProjectile()
 	MovementComponent->InitialSpeed = 2000.0f;
 
 	WeaponFXComponent = CreateDefaultSubobject<UVESWeaponFXComponent>("WeaponFXComponent");
+
+	ProjectileFXTraceComponent = CreateDefaultSubobject<UVESProjectileFXTraceComponent>("ProjectileFXTraceComponent");
 }
 
 void AVESProjectile::BeginPlay()

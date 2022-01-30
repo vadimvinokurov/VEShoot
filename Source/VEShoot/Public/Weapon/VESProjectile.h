@@ -9,6 +9,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UVESWeaponFXComponent;
+class UVESProjectileFXTraceComponent;
 
 UCLASS()
 class VESHOOT_API AVESProjectile : public AActor
@@ -27,11 +28,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-		UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USphereComponent* CollisionComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	UProjectileMovementComponent* MovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UVESProjectileFXTraceComponent* ProjectileFXTraceComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float DamageRadius = 200.0f;
@@ -45,7 +49,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float LifeSeconds = 50.f;
 
-		UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FX")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FX")
 	UVESWeaponFXComponent* WeaponFXComponent;
 
 private:
