@@ -3,6 +3,7 @@
 #include "Weapon/VESRifleWeapon.h"
 #include "DrawDebugHelpers.h"
 #include "Weapon/Components/VESWeaponFXComponent.h"
+#include "NiagaraComponent.h"
 
 AVESRifleWeapon::AVESRifleWeapon() 
 {
@@ -11,6 +12,7 @@ AVESRifleWeapon::AVESRifleWeapon()
 
 void AVESRifleWeapon::StartFire()
 {
+	InitMuzzleFX();
 	GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &AVESRifleWeapon::MakeShot, TimeBetweenShots, true);
 	MakeShot();
 }
@@ -18,6 +20,7 @@ void AVESRifleWeapon::StartFire()
 void AVESRifleWeapon::StopFire()
 {
 	GetWorldTimerManager().ClearTimer(ShotTimerHandle);
+	SetMuzzleFXVisibility(false);
 }
 
 void AVESRifleWeapon::BeginPlay() 
@@ -80,4 +83,22 @@ void AVESRifleWeapon::MakeDamage(const FHitResult& HitResult)
 	if (!DamageActor) return;
 
 	DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
+}
+
+void AVESRifleWeapon::InitMuzzleFX() 
+{
+	if (MuzzleFXComponent)
+	{
+		MuzzleFXComponent = SpawnMuzzleFX();
+	}
+	SetMuzzleFXVisibility(true);
+}
+
+void AVESRifleWeapon::SetMuzzleFXVisibility(bool Visible) 
+{
+	if (MuzzleFXComponent)
+	{
+		MuzzleFXComponent->SetPaused(!Visible);
+		MuzzleFXComponent->SetVisibility(Visible, true);
+	}
 }

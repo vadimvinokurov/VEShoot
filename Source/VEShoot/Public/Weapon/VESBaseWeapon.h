@@ -9,6 +9,9 @@
 #include "VESBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
+
 
 UCLASS()
 class VESHOOT_API AVESBaseWeapon : public AActor
@@ -57,6 +60,8 @@ protected:
 
 	FVector GetMuzzleWorldLocation() const;
 
+	UNiagaraComponent* SpawnMuzzleFX();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
 
@@ -71,6 +76,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	FWeaponUIData UIData;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "FX")
+	UNiagaraSystem* MuzzleFX;
 
 private:
 	FAmmoData CurrentAmmo{15, 10, false};

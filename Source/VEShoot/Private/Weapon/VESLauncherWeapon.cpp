@@ -33,4 +33,5 @@ void AVESLauncherWeapon::MakeShot()
 	}
 	// set projectile params
 	DecreaseAmmo();
+	SpawnMuzzleFX();
 }

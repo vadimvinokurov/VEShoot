@@ -6,9 +6,8 @@
 #include "Weapon/VESBaseWeapon.h"
 #include "VESRifleWeapon.generated.h"
 
-/**
- *
- */
+class UNiagaraComponent;
+class UNiagaraSystem;
 class UVESWeaponFXComponent;
  
 UCLASS()
@@ -45,4 +44,11 @@ protected:
 
 private:
 	FTimerHandle ShotTimerHandle;
+
+	UPROPERTY()
+	UNiagaraComponent* MuzzleFXComponent;
+
+	void InitMuzzleFX();
+
+	void SetMuzzleFXVisibility(bool Visible);
 };

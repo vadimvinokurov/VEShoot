@@ -7,6 +7,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
 // Sets default values
@@ -140,4 +143,15 @@ APlayerController* AVESBaseWeapon::GetPlayerController() const
 FVector AVESBaseWeapon::GetMuzzleWorldLocation() const
 {
 	return WeaponMesh->GetSocketLocation(MuzzleSocketName);
+}
+
+UNiagaraComponent* AVESBaseWeapon::SpawnMuzzleFX()
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX,  //
+		WeaponMesh,												   //
+		MuzzleSocketName,										   //
+		FVector::ZeroVector,									   //
+		FRotator::ZeroRotator,									   //
+		EAttachLocation::SnapToTarget,							   //
+		true);
 }
