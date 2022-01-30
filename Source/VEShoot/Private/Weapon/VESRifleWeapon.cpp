@@ -2,6 +2,12 @@
 
 #include "Weapon/VESRifleWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "Weapon/Components/VESWeaponFXComponent.h"
+
+AVESRifleWeapon::AVESRifleWeapon() 
+{
+	WeaponFXComponent = CreateDefaultSubobject<UVESWeaponFXComponent>("WeaponFXComponent");
+}
 
 void AVESRifleWeapon::StartFire()
 {
@@ -12,6 +18,12 @@ void AVESRifleWeapon::StartFire()
 void AVESRifleWeapon::StopFire()
 {
 	GetWorldTimerManager().ClearTimer(ShotTimerHandle);
+}
+
+void AVESRifleWeapon::BeginPlay() 
+{
+	Super::BeginPlay();
+	check(WeaponFXComponent);
 }
 
 void AVESRifleWeapon::MakeShot()
@@ -37,9 +49,9 @@ void AVESRifleWeapon::MakeShot()
 	if (HitResult.bBlockingHit)
 	{
 		MakeDamage(HitResult);
-
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+		WeaponFXComponent->PlayImpactFX(HitResult);
+		//DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
 	}
 	else
 	{

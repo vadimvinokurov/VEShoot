@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/Components/VESWeaponFXComponent.h"
 
 AVESProjectile::AVESProjectile()
 {
@@ -19,6 +20,8 @@ AVESProjectile::AVESProjectile()
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
 	MovementComponent->InitialSpeed = 2000.0f;
+
+	WeaponFXComponent = CreateDefaultSubobject<UVESWeaponFXComponent>("WeaponFXComponent");
 }
 
 void AVESProjectile::BeginPlay()
@@ -27,6 +30,7 @@ void AVESProjectile::BeginPlay()
 
 	check(CollisionComponent);
 	check(MovementComponent);
+	check(WeaponFXComponent);
 
 	MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
 	CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
@@ -52,7 +56,8 @@ void AVESProjectile::OnProjectileHit(
 		GetController(),							 //
 		DoFullDamage);
 
-	DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.0f);
+	WeaponFXComponent->PlayImpactFX(Hit);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.0f);
 
 	Destroy();
 }

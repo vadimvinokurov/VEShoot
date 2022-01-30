@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class UVESWeaponFXComponent;
 
 UCLASS()
 class VESHOOT_API AVESProjectile : public AActor
@@ -24,7 +25,9 @@ public:
 	}
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	virtual void BeginPlay() override;
+
+		UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USphereComponent* CollisionComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
@@ -42,7 +45,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float LifeSeconds = 50.f;
 
-	virtual void BeginPlay() override;
+		UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FX")
+	UVESWeaponFXComponent* WeaponFXComponent;
 
 private:
 	FVector ShotDirection;

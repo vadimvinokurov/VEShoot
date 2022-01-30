@@ -9,30 +9,39 @@
 /**
  *
  */
+class UVESWeaponFXComponent;
+ 
 UCLASS()
 class VESHOOT_API AVESRifleWeapon : public AVESBaseWeapon
 {
 	GENERATED_BODY()
 public:
+	AVESRifleWeapon();
+
 	virtual void StartFire() override;
 	
 	virtual void StopFire() override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	float TimeBetweenShots = 0.3f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	float BulletSpread = 1.5f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	float DamageAmount = 10;
+	virtual void BeginPlay() override;
 
 	virtual void MakeShot() override;
 	
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
 
 	void MakeDamage(const FHitResult& HitResult);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float TimeBetweenShots = 0.3f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float BulletSpread = 1.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float DamageAmount = 10;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FX")
+	UVESWeaponFXComponent* WeaponFXComponent;
 
 private:
 	FTimerHandle ShotTimerHandle;
