@@ -22,5 +22,6 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	TSubclassOf<AVESProjectile> ProjectileClass;
+	
 	virtual void MakeShot() override;
 };

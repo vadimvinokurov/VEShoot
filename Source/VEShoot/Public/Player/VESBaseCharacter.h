@@ -63,18 +63,21 @@ public:
 	float GetMovementDirection() const;
 
 private:
-	bool WantsToRun = false;
-	bool IsMovingForward = false;
-
 	void MoveForward(float Amount);
+	
 	void MoveRight(float Amount);
 
 	void OnStartRunning();
+	
 	void OnStopRunning();
 
 	void OnDeath();
+	
 	void OnHealthChanged(float Health);
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);
+
+	bool WantsToRun = false;
+	bool IsMovingForward = false;
 };

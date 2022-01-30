@@ -21,7 +21,6 @@ void AVESRifleWeapon::MakeShot()
 		StopFire();
 		return;
 	}
-	
 
 	FVector TraceStart;
 	FVector TraceEnd;
@@ -31,8 +30,6 @@ void AVESRifleWeapon::MakeShot()
 		StopFire();
 		return;
 	}
-	
-	
 
 	FHitResult HitResult;
 	MakeHit(HitResult, TraceStart, TraceEnd);

@@ -15,6 +15,7 @@ class VESHOOT_API AVESRifleWeapon : public AVESBaseWeapon
 	GENERATED_BODY()
 public:
 	virtual void StartFire() override;
+	
 	virtual void StopFire() override;
 
 protected:
@@ -28,6 +29,7 @@ protected:
 	float DamageAmount = 10;
 
 	virtual void MakeShot() override;
+	
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
 
 	void MakeDamage(const FHitResult& HitResult);

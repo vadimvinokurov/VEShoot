@@ -25,6 +25,7 @@ public:
 	bool TryToAddHealth(float HealthAmount);
 
 	FOnDeath OnDeath;
+	
 	FOnHealthChanged OnHealthChanged;
 
 protected:
@@ -46,10 +47,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	float Health = 0.0f;
-
-	FTimerHandle AutoHealthTimerHandle;
-
 	UFUNCTION()
 	void OnTakeAnyDamage(
 		AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -59,4 +56,8 @@ private:
 	void SetHealth(float NewHealth);
 
 	bool IsHealthFull() const { return Health == MaxHealth; }
+
+	float Health = 0.0f;
+	
+	FTimerHandle AutoHealthTimerHandle;
 };
