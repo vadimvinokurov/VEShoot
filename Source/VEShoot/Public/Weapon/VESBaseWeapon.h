@@ -18,22 +18,45 @@ class VESHOOT_API AVESBaseWeapon : public AActor
 public:
 	AVESBaseWeapon();
 
-	FOnClipEmptySignature OnClipEmpty;
-
 	virtual void StartFire();
+	
 	virtual void StopFire();
-
-	void ChangedClip();
-	bool CanReload() const;
-
-	FWeaponUIData GetUIDate() const { return UIData; }
-	FAmmoData GetAmmoDate() const { return CurrentAmmo; }
 
 	bool TryToAddAmmo(int32 ClipsAmount);
 
+	void ChangedClip();
+	
+	bool CanReload() const;
+
 	bool IsClipEmpty() const;
 
+	FWeaponUIData GetUIDate() const { return UIData; }
+	
+	FAmmoData GetAmmoDate() const { return CurrentAmmo; }
+
+	FOnClipEmptySignature OnClipEmpty;
+
 protected:
+	virtual void BeginPlay() override;
+	
+	virtual void MakeShot();
+	
+	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
+	
+	void DecreaseAmmo();
+	
+	bool IsAmmoEmpty() const;
+	
+	bool IsAmmoFull() const;
+
+	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
+
+	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
+
+	APlayerController* AVESBaseWeapon::GetPlayerController() const;
+
+	FVector GetMuzzleWorldLocation() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
 
@@ -48,20 +71,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	FWeaponUIData UIData;
-
-	virtual void BeginPlay() override;
-
-	virtual void MakeShot();
-
-	APlayerController* AVESBaseWeapon::GetPlayerController() const;
-	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
-	FVector GetMuzzleWorldLocation() const;
-	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
-	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
-
-	void DecreaseAmmo();
-	bool IsAmmoEmpty() const;
-	bool IsAmmoFull() const;
 
 private:
 	FAmmoData CurrentAmmo{15, 10, false};

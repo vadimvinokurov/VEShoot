@@ -17,6 +17,64 @@ UVESWeaponComponent::UVESWeaponComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UVESWeaponComponent::StartFire()
+{
+	if (!CanFire()) return;
+
+	CurrentWeapon->StartFire();
+}
+
+void UVESWeaponComponent::StopFire()
+{
+	if (!CurrentWeapon) return;
+
+	CurrentWeapon->StopFire();
+}
+
+void UVESWeaponComponent::NextWeapon()
+{
+	if (!CanEquip()) return;
+	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
+	EquipWeapon(CurrentWeaponIndex);
+}
+
+void UVESWeaponComponent::Reload()
+{
+	ChangedClip();
+}
+
+bool UVESWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUIDate();
+		return true;
+	}
+	return false;
+}
+
+bool UVESWeaponComponent::GetAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoDate();
+		return true;
+	}
+	return false;
+}
+
+bool UVESWeaponComponent::TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, int32 ClipsAmount)
+{
+	for (const auto Weapon : Weapons)
+	{
+		if (Weapon && Weapon->IsA(WeaponType))
+		{
+			return Weapon->TryToAddAmmo(ClipsAmount);
+		}
+	}
+	return false;
+}
+
 void UVESWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,6 +99,28 @@ void UVESWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Weapons.Empty();
 
 	Super::EndPlay(EndPlayReason);
+}
+
+void UVESWeaponComponent::InitAnimation()
+{
+	auto EquipFinishedNotify = AnimUtils::FindNotifyByClass<UVESEquipFinishedAnimNotify>(EquipAnimMontage);
+	if (!EquipFinishedNotify)
+	{
+		UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
+		checkNoEntry();
+	}
+	EquipFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnEquipFinished);
+
+	for (auto OneWeaponData : WeaponData)
+	{
+		auto ReloadFinishedNotify = AnimUtils::FindNotifyByClass<UVESReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		if (!ReloadFinishedNotify)
+		{
+			UE_LOG(LogWeaponComponent, Error, TEXT("Reload anim notify is forgotten to set"));
+			checkNoEntry();
+		}
+		ReloadFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnReloadFinished);
+	}
 }
 
 void UVESWeaponComponent::SpawnWeapons()
@@ -85,7 +165,7 @@ void UVESWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	}
 
 	CurrentWeapon = Weapons[WeaponIndex];
-	// CurrentReloadAnimMontage = WeaponData[WeaponIndex].ReloadAnimMontage;
+
 	const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const FWeaponData& Data) {  //
 		return Data.WeaponClass == CurrentWeapon->GetClass();								  //
 	});
@@ -96,27 +176,6 @@ void UVESWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	PlayAnimMontage(EquipAnimMontage);
 }
 
-void UVESWeaponComponent::StartFire()
-{
-	if (!CanFire()) return;
-
-	CurrentWeapon->StartFire();
-}
-
-void UVESWeaponComponent::StopFire()
-{
-	if (!CurrentWeapon) return;
-
-	CurrentWeapon->StopFire();
-}
-
-void UVESWeaponComponent::NextWeapon()
-{
-	if (!CanEquip()) return;
-	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
-	EquipWeapon(CurrentWeaponIndex);
-}
-
 void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -125,29 +184,38 @@ void UVESWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 	Character->PlayAnimMontage(Animation);
 }
 
-void UVESWeaponComponent::InitAnimation()
+void UVESWeaponComponent::ChangedClip()
 {
-	auto EquipFinishedNotify = AnimUtils::FindNotifyByClass<UVESEquipFinishedAnimNotify>(EquipAnimMontage);
-	if (EquipFinishedNotify)
-	{
-		EquipFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnEquipFinished);
-	}
-	else
-	{
-		UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
-		checkNoEntry();
-	}
+	if (!CanReload()) return;
+	CurrentWeapon->StopFire();
 
-	for (auto OneWeaponData : WeaponData)
-	{
-		auto ReloadFinishedNotify = AnimUtils::FindNotifyByClass<UVESReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
-		if (!ReloadFinishedNotify)
-		{
-			UE_LOG(LogWeaponComponent, Error, TEXT("Reload anim notify is forgotten to set"));
-			checkNoEntry();
-		}
+	ReloadAnimInProgress = true;
+	PlayAnimMontage(CurrentReloadAnimMontage);
+}
 
-		ReloadFinishedNotify->OnNotified.AddUObject(this, &UVESWeaponComponent::OnReloadFinished);
+bool UVESWeaponComponent::CanReload() const
+{
+	return CurrentWeapon &&			 //
+		   !EquipAnimInProgress &&	 //
+		   !ReloadAnimInProgress &&	 //
+		   CurrentWeapon->CanReload();
+}
+
+bool UVESWeaponComponent::CanEquip() const
+{
+	return !EquipAnimInProgress && !ReloadAnimInProgress;
+}
+
+bool UVESWeaponComponent::CanFire() const
+{
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
+}
+
+void UVESWeaponComponent::OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon)
+{
+	if (CurrentWeapon == AmmoEmptyWeapon)
+	{
+		ChangedClip();
 	}
 }
 
@@ -171,77 +239,4 @@ void UVESWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
 
 	CurrentWeapon->ChangedClip();
 	ReloadAnimInProgress = false;
-}
-
-bool UVESWeaponComponent::CanFire() const
-{
-	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
-}
-
-bool UVESWeaponComponent::CanEquip() const
-{
-	return !EquipAnimInProgress && !ReloadAnimInProgress;
-}
-
-bool UVESWeaponComponent::CanReload() const
-{
-	return CurrentWeapon &&			 //
-		   !EquipAnimInProgress &&	 //
-		   !ReloadAnimInProgress &&	 //
-		   CurrentWeapon->CanReload();
-}
-
-void UVESWeaponComponent::OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon)
-{
-	if (CurrentWeapon == AmmoEmptyWeapon)
-	{
-		ChangedClip();
-	}
-}
-
-void UVESWeaponComponent::ChangedClip()
-{
-	if (!CanReload()) return;
-	CurrentWeapon->StopFire();
-
-	ReloadAnimInProgress = true;
-	PlayAnimMontage(CurrentReloadAnimMontage);
-}
-
-void UVESWeaponComponent::Reload()
-{
-	ChangedClip();
-}
-
-bool UVESWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
-{
-	if (CurrentWeapon)
-	{
-		UIData = CurrentWeapon->GetUIDate();
-		return true;
-	}
-	return false;
-}
-
-bool UVESWeaponComponent::GetAmmoData(FAmmoData& AmmoData) const
-{
-	if (CurrentWeapon)
-	{
-		AmmoData = CurrentWeapon->GetAmmoDate();
-		return true;
-	}
-	return false;
-}
-
-bool UVESWeaponComponent::TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, int32 ClipsAmount)
-{
-	for (const auto Weapon : Weapons)
-	{
-		if (Weapon && Weapon->IsA(WeaponType))
-		{
-			return Weapon->TryToAddAmmo(ClipsAmount);
-		}
-	}
-
-	return false;
 }

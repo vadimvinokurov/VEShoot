@@ -19,8 +19,11 @@ public:
 	UVESWeaponComponent();
 
 	void StartFire();
+	
 	void StopFire();
+	
 	void NextWeapon();
+	
 	void Reload();
 
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
@@ -30,6 +33,10 @@ public:
 	bool TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, int32 ClipsAmount);
 
 protected:
+	virtual void BeginPlay() override;
+	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TArray<FWeaponData> WeaponData;
 
@@ -42,10 +49,33 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* EquipAnimMontage;
 
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
-
 private:
+	void InitAnimation();
+	
+	void SpawnWeapons();
+	
+	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
+	
+	void EquipWeapon(int32 WeaponIndex);
+
+	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
+
+	void ChangedClip();
+
+	bool CanReload() const;
+
+	bool CanEquip() const;
+	
+	bool CanFire() const;
+
+	void OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon);
+	
+
+
+	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+
+	void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
+
 	UPROPERTY()
 	AVESBaseWeapon* CurrentWeapon = nullptr;
 
@@ -56,23 +86,8 @@ private:
 	UAnimMontage* CurrentReloadAnimMontage = nullptr;
 
 	int32 CurrentWeaponIndex = 0;
+	
 	bool EquipAnimInProgress = false;
+	
 	bool ReloadAnimInProgress = false;
-
-	void InitAnimation();
-	void SpawnWeapons();
-	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
-	void EquipWeapon(int32 WeaponIndex);
-
-	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
-
-	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
-	void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
-
-	bool CanEquip() const;
-	bool CanFire() const;
-	bool CanReload() const;
-
-	void OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon);
-	void ChangedClip();
 };
