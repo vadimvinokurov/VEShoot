@@ -2,8 +2,11 @@
 
 #include "Components/VESHealthComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Camera/CameraShakeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -26,6 +29,7 @@ void UVESHealthComponent::BeginPlay()
 	Super::BeginPlay();
 
 	check(MaxHealth > 0);
+	check(CameraShake);
 
 	SetHealth(MaxHealth);
 
@@ -55,6 +59,7 @@ void UVESHealthComponent::OnTakeAnyDamage(
 		GetWorld()->GetTimerManager().SetTimer(
 			AutoHealthTimerHandle, this, &UVESHealthComponent::OnAutoHeal, AutoHealIncDelay, true, AutoHealDelay);
 	}
+	PlayCameraShake();
 }
 
 void UVESHealthComponent::OnAutoHeal()
@@ -71,4 +76,18 @@ void UVESHealthComponent::SetHealth(float NewHealth)
 {
 	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 	OnHealthChanged.Broadcast(Health);
+}
+
+void UVESHealthComponent::PlayCameraShake()
+{
+	if (IsDead()) return;
+
+	const auto Player = Cast<APawn>(GetOwner());
+	if (!Player) return;
+
+	const auto Controller = Player->GetController<APlayerController>();
+	if (!Controller || !Controller->PlayerCameraManager) return;
+	
+	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
+
 }

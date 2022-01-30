@@ -6,6 +6,8 @@
 
 #include "VESHealthComponent.generated.h"
 
+class UCameraShakeBase;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class VESHOOT_API UVESHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -25,10 +27,12 @@ public:
 	bool TryToAddHealth(float HealthAmount);
 
 	FOnDeath OnDeath;
-	
+
 	FOnHealthChanged OnHealthChanged;
 
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0", ClampMax = "1000.0"))
 	float MaxHealth = 100.0f;
 
@@ -44,7 +48,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHealEnable"))
 	float AutoHealIncDelay = 0.3f;
 
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	TSubclassOf<UCameraShakeBase> CameraShake;
 
 private:
 	UFUNCTION()
@@ -57,7 +62,9 @@ private:
 
 	bool IsHealthFull() const { return Health == MaxHealth; }
 
+	void PlayCameraShake();
+
 	float Health = 0.0f;
-	
+
 	FTimerHandle AutoHealthTimerHandle;
 };

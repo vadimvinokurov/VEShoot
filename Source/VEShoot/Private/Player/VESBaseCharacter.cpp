@@ -46,6 +46,7 @@ void AVESBaseCharacter::BeginPlay()
 	check(HealthComponent);
 	check(HealthTextComponent);
 	check(GetCharacterMovement());
+	check(GetMesh());
 
 	OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &AVESBaseCharacter::OnDeath);
@@ -142,7 +143,7 @@ void AVESBaseCharacter::OnHealthChanged(float Health)
 void AVESBaseCharacter::OnDeath()
 {
 	UE_LOG(BaseCharacterLog, Display, TEXT("Player pogib %s"), *GetName());
-	PlayAnimMontage(DeapthAnimMotage);
+	//PlayAnimMontage(DeapthAnimMotage);
 
 	GetCharacterMovement()->DisableMovement();
 
@@ -154,4 +155,7 @@ void AVESBaseCharacter::OnDeath()
 	}
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	WeaponComponent->StopFire();
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
 }
