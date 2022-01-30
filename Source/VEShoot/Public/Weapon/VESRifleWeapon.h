@@ -42,6 +42,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FX")
 	UVESWeaponFXComponent* WeaponFXComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "FX")
+	UNiagaraSystem* TraceFX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "FX")
+	FString TraceTargetName = "TraceTarget";
+
 private:
 	FTimerHandle ShotTimerHandle;
 
@@ -51,4 +57,6 @@ private:
 	void InitMuzzleFX();
 
 	void SetMuzzleFXVisibility(bool Visible);
+
+	void SpawnTaceFX(const FVector& TraceStart, const FVector& TraceEnd); 
 };

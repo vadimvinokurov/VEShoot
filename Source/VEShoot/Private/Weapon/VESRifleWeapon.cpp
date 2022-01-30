@@ -4,6 +4,7 @@
 #include "DrawDebugHelpers.h"
 #include "Weapon/Components/VESWeaponFXComponent.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 AVESRifleWeapon::AVESRifleWeapon() 
 {
@@ -49,17 +50,15 @@ void AVESRifleWeapon::MakeShot()
 	FHitResult HitResult;
 	MakeHit(HitResult, TraceStart, TraceEnd);
 
+	FVector TraceFXEnd = TraceEnd;
 	if (HitResult.bBlockingHit)
 	{
+		TraceFXEnd = HitResult.ImpactPoint;
 		MakeDamage(HitResult);
 		WeaponFXComponent->PlayImpactFX(HitResult);
-		//DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
 	}
-	else
-	{
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
-	}
+	SpawnTaceFX(GetMuzzleWorldLocation(), TraceFXEnd);
+
 	DecreaseAmmo();
 }
 
@@ -87,7 +86,7 @@ void AVESRifleWeapon::MakeDamage(const FHitResult& HitResult)
 
 void AVESRifleWeapon::InitMuzzleFX() 
 {
-	if (MuzzleFXComponent)
+	if (!MuzzleFXComponent)
 	{
 		MuzzleFXComponent = SpawnMuzzleFX();
 	}
@@ -100,5 +99,14 @@ void AVESRifleWeapon::SetMuzzleFXVisibility(bool Visible)
 	{
 		MuzzleFXComponent->SetPaused(!Visible);
 		MuzzleFXComponent->SetVisibility(Visible, true);
+	}
+}
+
+void AVESRifleWeapon::SpawnTaceFX(const FVector& TraceStart, const FVector& TraceEnd) 
+{
+	const auto TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceFX, TraceStart);
+	if (TraceFXComponent)
+	{
+		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
 	}
 }
