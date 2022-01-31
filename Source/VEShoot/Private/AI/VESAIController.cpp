@@ -3,6 +3,14 @@
 
 #include "AI/VESAIController.h"
 #include "AI/VESAICharacter.h"
+#include "Components/VESAIPerceptionComponent.h"
+
+
+AVESAIController::AVESAIController() 
+{
+	VESAIPerceptionComponent = CreateDefaultSubobject<UVESAIPerceptionComponent>("VESAIPerceptionComponent");
+	SetPerceptionComponent(*VESAIPerceptionComponent);
+}
 
 void AVESAIController::OnPossess(APawn* InPawn) 
 {
@@ -14,4 +22,11 @@ void AVESAIController::OnPossess(APawn* InPawn)
 	{
 		RunBehaviorTree(VESCharacter->BehaviorTreeAsset);
 	}
+}
+
+void AVESAIController::Tick(float DeltaTime) 
+{
+	Super::Tick(DeltaTime);
+	const auto AimActor = VESAIPerceptionComponent->GetClosestEnemy();
+	SetFocus(AimActor);
 }
