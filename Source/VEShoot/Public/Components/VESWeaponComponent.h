@@ -18,12 +18,12 @@ class VESHOOT_API UVESWeaponComponent : public UActorComponent
 public:
 	UVESWeaponComponent();
 
-	void StartFire();
-	
+	virtual void StartFire();
+
 	void StopFire();
-	
-	void NextWeapon();
-	
+
+	virtual void NextWeapon();
+
 	void Reload();
 
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
@@ -34,8 +34,14 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	bool CanEquip() const;
+
+	bool CanFire() const;
+
+	void EquipWeapon(int32 WeaponIndex);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TArray<FWeaponData> WeaponData;
@@ -49,14 +55,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* EquipAnimMontage;
 
+	UPROPERTY()
+	AVESBaseWeapon* CurrentWeapon = nullptr;
+
+	UPROPERTY()
+	TArray<AVESBaseWeapon*> Weapons;
+
+	int32 CurrentWeaponIndex = 0;
+
 private:
 	void InitAnimation();
-	
+
 	void SpawnWeapons();
-	
+
 	void AttachWeaponToSocket(AVESBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
-	
-	void EquipWeapon(int32 WeaponIndex);
 
 	void PlayAnimMontage(UAnimMontage* EquipAnimMontage);
 
@@ -64,30 +76,16 @@ private:
 
 	bool CanReload() const;
 
-	bool CanEquip() const;
-	
-	bool CanFire() const;
-
 	void OnClipEmpty(AVESBaseWeapon* AmmoEmptyWeapon);
-	
-
 
 	void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
 
 	void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
 
 	UPROPERTY()
-	AVESBaseWeapon* CurrentWeapon = nullptr;
-
-	UPROPERTY()
-	TArray<AVESBaseWeapon*> Weapons;
-
-	UPROPERTY()
 	UAnimMontage* CurrentReloadAnimMontage = nullptr;
 
-	int32 CurrentWeaponIndex = 0;
-	
 	bool EquipAnimInProgress = false;
-	
+
 	bool ReloadAnimInProgress = false;
 };

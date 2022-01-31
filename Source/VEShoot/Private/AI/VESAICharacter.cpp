@@ -4,8 +4,10 @@
 #include "AI/VESAICharacter.h"
 #include "AI/VESAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/VESAIWeaponComponent.h"
 
-AVESAICharacter::AVESAICharacter(const FObjectInitializer& ObjInit) : Super(ObjInit)
+AVESAICharacter::AVESAICharacter(const FObjectInitializer& ObjInit) 
+	: Super(ObjInit.SetDefaultSubobjectClass<UVESAIWeaponComponent>("WeaponComponent"))
 {
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AVESAIController::StaticClass();

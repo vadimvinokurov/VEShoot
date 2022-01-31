@@ -33,6 +33,8 @@ public:
 
 	bool IsClipEmpty() const;
 
+	bool IsAmmoEmpty() const;
+
 	FWeaponUIData GetUIDate() const { return UIData; }
 	
 	FAmmoData GetAmmoDate() const { return CurrentAmmo; }
@@ -47,8 +49,6 @@ protected:
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd) const;
 	
 	void DecreaseAmmo();
-	
-	bool IsAmmoEmpty() const;
 	
 	bool IsAmmoFull() const;
 
