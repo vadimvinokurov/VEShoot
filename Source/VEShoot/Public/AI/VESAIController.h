@@ -8,7 +8,6 @@
 
 class UVESAIPerceptionComponent;
 
-
 UCLASS()
 class VESHOOT_API AVESAIController : public AAIController
 {
@@ -24,4 +23,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UVESAIPerceptionComponent* VESAIPerceptionComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	FName FocusOnKeyName = "EnemyActor";
+
+private:
+	AActor* GetFocusOnActor() const;
 };

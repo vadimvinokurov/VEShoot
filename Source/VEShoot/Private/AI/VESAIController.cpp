@@ -4,7 +4,7 @@
 #include "AI/VESAIController.h"
 #include "AI/VESAICharacter.h"
 #include "Components/VESAIPerceptionComponent.h"
-
+#include "BehaviorTree/BlackboardComponent.h"
 
 AVESAIController::AVESAIController() 
 {
@@ -29,4 +29,10 @@ void AVESAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	const auto AimActor = VESAIPerceptionComponent->GetClosestEnemy();
 	SetFocus(AimActor);
+}
+
+AActor* AVESAIController::GetFocusOnActor() const
+{
+	if (!GetBlackboardComponent()) return nullptr;
+	return Cast<AActor>(GetBlackboardComponent()->GetValueAsObject(FocusOnKeyName));
 }

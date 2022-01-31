@@ -24,8 +24,8 @@ AActor* UVESAIPerceptionComponent::GetClosestEnemy() const
 
 	for (const auto PercieveActor : PercieveActors)
 	{
-		const auto HealthComponent = PercieveActor->GetComponentByClass(UVESHealthComponent::StaticClass());
-		if (HealthComponent && !HealthComponent->IsDestructionThreadSafe())	 // TODO: check if enemies or not
+		const auto HealthComponent = PercieveActor->FindComponentByClass<UVESHealthComponent>();
+		if (HealthComponent && !HealthComponent->IsDead())	 // TODO: check if enemies or not
 		{
 			const auto CurrentDistance = (PercieveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
 			if (CurrentDistance < BestDistance)
