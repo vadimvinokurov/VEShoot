@@ -32,6 +32,8 @@ public:
 
 	bool TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, int32 ClipsAmount);
 
+	bool NeedAmmo(TSubclassOf<AVESBaseWeapon> WeaponType);
+
 protected:
 	virtual void BeginPlay() override;
 

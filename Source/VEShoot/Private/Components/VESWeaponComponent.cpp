@@ -75,6 +75,18 @@ bool UVESWeaponComponent::TryToAddAmmo(TSubclassOf<AVESBaseWeapon> WeaponType, i
 	return false;
 }
 
+bool UVESWeaponComponent::NeedAmmo(TSubclassOf<AVESBaseWeapon> WeaponType)
+{
+	for (const auto Weapon : Weapons)
+	{
+		if (Weapon && Weapon->IsA(WeaponType))
+		{
+			return !Weapon->IsAmmoFull();
+		}
+	}
+	return false;
+}
+
 void UVESWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
