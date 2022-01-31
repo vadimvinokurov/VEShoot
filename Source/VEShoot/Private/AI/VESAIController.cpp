@@ -2,3 +2,16 @@
 
 
 #include "AI/VESAIController.h"
+#include "AI/VESAICharacter.h"
+
+void AVESAIController::OnPossess(APawn* InPawn) 
+{
+	Super::OnPossess(InPawn);
+
+	const auto VESCharacter = Cast<AVESAICharacter>(InPawn);
+
+	if (VESCharacter)
+	{
+		RunBehaviorTree(VESCharacter->BehaviorTreeAsset);
+	}
+}

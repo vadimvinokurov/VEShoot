@@ -9,6 +9,8 @@
 /**
  *
  */
+class UBehaviorTree;
+
 UCLASS()
 class VESHOOT_API AVESAICharacter : public AVESBaseCharacter
 {
@@ -16,4 +18,7 @@ class VESHOOT_API AVESAICharacter : public AVESBaseCharacter
 
 public:
 	AVESAICharacter(const FObjectInitializer& ObjInit);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	UBehaviorTree* BehaviorTreeAsset;
 };
