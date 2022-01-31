@@ -125,10 +125,21 @@ bool AVESBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 
 bool AVESBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
-	const auto Controller = GetPlayerController();
-	if (!Controller) return false;
+	const auto VESCharacter = Cast<ACharacter>(GetOwner());
+	if (!VESCharacter) return false;
 
-	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	if (VESCharacter->IsPlayerControlled())
+	{
+		const auto Controller = GetPlayerController();
+		if (!Controller) return false;
+
+		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	}
+	else
+	{
+		ViewLocation = GetMuzzleWorldLocation();
+		ViewRotation = WeaponMesh->GetSocketRotation(MuzzleSocketName);
+	}
 	return true;
 }
 
