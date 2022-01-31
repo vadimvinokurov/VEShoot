@@ -5,6 +5,7 @@
 #include "AI/VESAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/VESAIWeaponComponent.h"
+#include "BrainComponent.h"
 
 AVESAICharacter::AVESAICharacter(const FObjectInitializer& ObjInit) 
 	: Super(ObjInit.SetDefaultSubobjectClass<UVESAIWeaponComponent>("WeaponComponent"))
@@ -20,4 +21,14 @@ AVESAICharacter::AVESAICharacter(const FObjectInitializer& ObjInit)
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 200.f, 0.0f);
 	}
 
+}
+
+void AVESAICharacter::OnDeath() 
+{
+	Super::OnDeath();
+	const auto VESController = Cast<AAIController>(Controller);
+	if (VESController && VESController->BrainComponent)
+	{
+		VESController->BrainComponent->Cleanup();
+	}
 }
