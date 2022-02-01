@@ -17,6 +17,8 @@ public:
 	// Sets default values for this actor's properties
 	AVESBasePickup();
 
+	bool CouldBeTaken() const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Pickup")
 	USphereComponent* CollisionComponent;
@@ -40,4 +42,6 @@ private:
 	void Respawn();
 
 	void GenerateRotationYaw();
+
+	FTimerHandle RespawnTimerHandle;
 };
