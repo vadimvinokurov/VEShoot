@@ -51,7 +51,7 @@ void AVESProjectile::OnProjectileHit(
 		GetActorLocation(),							 //
 		DamageRadius,								 //
 		StaticClass(),								 //
-		{GetOwner()},								 //
+		{},								 //
 		this,										 //
 		GetController(),							 //
 		DoFullDamage);

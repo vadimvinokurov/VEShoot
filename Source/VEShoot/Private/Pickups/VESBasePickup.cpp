@@ -64,12 +64,12 @@ void AVESBasePickup::PickupWasTaken()
 
 void AVESBasePickup::Respawn()
 {
-	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	if (GetRootComponent())
 	{
 		GetRootComponent()->SetVisibility(true, true);
 	}
 	GenerateRotationYaw();
+	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }
 
 void AVESBasePickup::GenerateRotationYaw()

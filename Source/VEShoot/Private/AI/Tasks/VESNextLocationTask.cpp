@@ -23,7 +23,7 @@ EBTNodeResult::Type UVESNextLocationTask::ExecuteTask(UBehaviorTreeComponent& Ow
 	const auto NavSys = UNavigationSystemV1::GetCurrent(Pawn);
 	if (!NavSys) return EBTNodeResult::Failed;
 
-	FNavLocation NavLocation;
+	
 	auto Location = Pawn->GetActorLocation();
 	if (!SelfCenter)
 	{
@@ -32,6 +32,7 @@ EBTNodeResult::Type UVESNextLocationTask::ExecuteTask(UBehaviorTreeComponent& Ow
 		Location = CenterActor->GetActorLocation();
 	}
 
+	FNavLocation NavLocation;
 	const auto Found = NavSys->GetRandomReachablePointInRadius(Location, Radius, NavLocation);
 	if (!Found) return EBTNodeResult::Failed;
 	
