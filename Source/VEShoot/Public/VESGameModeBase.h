@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VESCoreTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "VESGameModeBase.generated.h"
 
 /**
  *
  */
+
+class AAIController;
 UCLASS()
 class VESHOOT_API AVESGameModeBase : public AGameModeBase
 {
@@ -16,4 +19,20 @@ class VESHOOT_API AVESGameModeBase : public AGameModeBase
 
 public:
 	AVESGameModeBase();
+	virtual void StartPlay() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	TSubclassOf<AAIController> AIControllerClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	TSubclassOf<APawn> AIPawnClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Game")
+	FGameData GameData;
+
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
+private:
+	void SpawnBots();
 };
