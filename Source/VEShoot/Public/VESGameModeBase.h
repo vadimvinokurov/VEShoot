@@ -35,4 +35,11 @@ protected:
 
 private:
 	void SpawnBots();
+	void GameTimerUpdate();
+	void StartRound();
+
+	int32 CurrentRound = 1;
+	int32 RoundCountdown = 10;
+	FTimerHandle GameRoundTimerHandle;
+
 };
