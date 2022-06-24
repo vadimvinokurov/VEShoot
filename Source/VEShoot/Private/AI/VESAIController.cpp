@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AI/VESAIController.h"
 #include "AI/VESAICharacter.h"
 #include "Components/VESAIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-AVESAIController::AVESAIController() 
+AVESAIController::AVESAIController()
 {
 	VESAIPerceptionComponent = CreateDefaultSubobject<UVESAIPerceptionComponent>("VESAIPerceptionComponent");
 	SetPerceptionComponent(*VESAIPerceptionComponent);
+	bWantsPlayerState = true;
 }
 
-void AVESAIController::OnPossess(APawn* InPawn) 
+void AVESAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
@@ -24,7 +24,7 @@ void AVESAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-void AVESAIController::Tick(float DeltaTime) 
+void AVESAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	const auto AimActor = VESAIPerceptionComponent->GetClosestEnemy();

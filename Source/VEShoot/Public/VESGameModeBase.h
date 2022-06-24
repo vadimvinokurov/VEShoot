@@ -38,6 +38,9 @@ private:
 	void GameTimerUpdate();
 	void StartRound();
 
+	void ResetPlayer();
+	void ResetOnePlayer(AController* Controller);
+
 	int32 CurrentRound = 1;
 	int32 RoundCountdown = 10;
 	FTimerHandle GameRoundTimerHandle;

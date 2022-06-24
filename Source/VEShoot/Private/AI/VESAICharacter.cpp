@@ -10,7 +10,7 @@
 AVESAICharacter::AVESAICharacter(const FObjectInitializer& ObjInit) 
 	: Super(ObjInit.SetDefaultSubobjectClass<UVESAIWeaponComponent>("WeaponComponent"))
 {
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AutoPossessAI = EAutoPossessAI::Disabled;
 	AIControllerClass = AVESAIController::StaticClass();
 
 	bUseControllerRotationYaw = false;

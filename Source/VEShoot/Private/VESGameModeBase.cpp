@@ -48,6 +48,7 @@ void AVESGameModeBase::GameTimerUpdate()
 		{
 			++CurrentRound;
 			StartRound();
+			ResetPlayer();
 		}
 		else
 		{
@@ -60,6 +61,24 @@ void AVESGameModeBase::StartRound()
 {
 	RoundCountdown = GameData.RoundTime;
 	GetWorldTimerManager().SetTimer(GameRoundTimerHandle, this, &AVESGameModeBase::GameTimerUpdate, true, 1.0f);
+}
+
+void AVESGameModeBase::ResetPlayer() {
+	if (!GetWorld()) return;
+
+	for (auto It = GetWorld()->GetControllerIterator(); It; It++)
+	{
+		ResetOnePlayer(It->Get());
+	}
+}
+
+void AVESGameModeBase::ResetOnePlayer(AController* Controller)
+{
+	if (Controller && Controller->GetPawn())
+	{
+		Controller->GetPawn()->Reset();
+	}
+	RestartPlayer(Controller);
 }
 
 UClass* AVESGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
