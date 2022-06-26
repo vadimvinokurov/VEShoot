@@ -6,10 +6,8 @@
 #include "GameFramework/Character.h"
 #include "VESBaseCharacter.generated.h"
 
-class UCameraComponent;
-class USpringArmComponent;
+
 class UVESHealthComponent;
-class UTextRenderComponent;
 class UVESWeaponComponent;
 
 UCLASS()
@@ -18,8 +16,19 @@ class VESHOOT_API AVESBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+
 	AVESBaseCharacter(const FObjectInitializer& ObjInit);
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual bool IsRunning() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetMovementDirection() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Teams")
+	void SetPlayerColor(const FLinearColor& Color);
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,16 +37,7 @@ protected:
 	virtual void OnDeath();
 
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
-	UCameraComponent* CameraComponent;
-
-	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
-	USpringArmComponent* SpringArmComponent;
-
-	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UVESHealthComponent* HealthComponent;
-
-	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
-	UTextRenderComponent* HealthTextComponent;
 
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UVESWeaponComponent* WeaponComponent;
@@ -54,36 +54,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 	FName MaterialColorName = "Paint Color";
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	bool IsRunning() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	float GetMovementDirection() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Teams")
-	void SetPlayerColor(const FLinearColor& Color);
-
 private:
-	void MoveForward(float Amount);
-	
-	void MoveRight(float Amount);
-
-	void OnStartRunning();
-	
-	void OnStopRunning();
-	
 	void OnHealthChanged(float Health, float DeltaHealth);
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);
-
-	bool WantsToRun = false;
-	bool IsMovingForward = false;
 };
