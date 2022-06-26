@@ -22,6 +22,9 @@ public:
 	virtual void StartPlay() override;
 
 	void Killed(AController* KillerController, AController* VictimController);
+	FGameData GetGameData() const { return GameData; }
+	int32 GetCurrentRoundNum() const { return CurrentRound; }
+	int32 GetRoundSecondsRemaining() const { return RoundCountdown; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
