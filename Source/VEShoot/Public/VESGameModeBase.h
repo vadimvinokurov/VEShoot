@@ -26,6 +26,8 @@ public:
 	int32 GetCurrentRoundNum() const { return CurrentRound; }
 	int32 GetRoundSecondsRemaining() const { return RoundCountdown; }
 
+	void RespawnRequest(AController* Controller);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	TSubclassOf<AAIController> AIControllerClass;
@@ -39,6 +41,7 @@ protected:
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
 private:
+	void StartRespawn(AController* Controller);
 	void SpawnBots();
 	void GameTimerUpdate();
 	void StartRound();

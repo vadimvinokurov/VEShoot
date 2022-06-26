@@ -7,6 +7,8 @@
 #include "AIController.h"
 #include "TimerManager.h"
 #include "UI/VESGameHUD.h"
+#include "VESUtils.h"
+#include "Components/VESRespawnComponent.h"
 
 AVESGameModeBase::AVESGameModeBase()
 {
@@ -26,7 +28,8 @@ void AVESGameModeBase::StartPlay()
 	StartRound();
 }
 
-void AVESGameModeBase::Killed(AController* KillerController, AController* VictimController) {
+void AVESGameModeBase::Killed(AController* KillerController, AController* VictimController)
+{
 	const auto KillerPlayerState = KillerController ? Cast<AVESPlayerState>(KillerController->PlayerState) : nullptr;
 	const auto VictimPlayerState = VictimController ? Cast<AVESPlayerState>(VictimController->PlayerState) : nullptr;
 
@@ -38,6 +41,20 @@ void AVESGameModeBase::Killed(AController* KillerController, AController* Victim
 	{
 		VictimPlayerState->AddDeath();
 	}
+	StartRespawn(VictimController);
+}
+
+void AVESGameModeBase::RespawnRequest(AController* Controller)
+{
+	ResetOnePlayer(Controller);
+}
+
+void AVESGameModeBase::StartRespawn(AController* Controller)
+{
+	const auto RespawnComponent = VESUtils::GetVESPlayerComponent<UVESRespawnComponent>(Controller);
+	if (!RespawnComponent) return;
+
+	RespawnComponent->Respawn(GameData.ResoawnTime);
 }
 
 void AVESGameModeBase::SpawnBots()
@@ -77,6 +94,8 @@ void AVESGameModeBase::GameTimerUpdate()
 
 void AVESGameModeBase::StartRound()
 {
+	const auto RestartAvailable = RoundCountdown > GameData.MinRoundTimeForRespawn + GameData.ResoawnTime;
+	if (RestartAvailable) return;
 	RoundCountdown = GameData.RoundTime;
 	GetWorldTimerManager().SetTimer(GameRoundTimerHandle, this, &AVESGameModeBase::GameTimerUpdate, true, 1.0f);
 }
@@ -146,7 +165,8 @@ void AVESGameModeBase::SetPlayerColor(AController* Controller)
 	Character->SetPlayerColor(PlayerState->GetTeamColor());
 }
 
-void AVESGameModeBase::LogPlayersInfo() {
+void AVESGameModeBase::LogPlayersInfo()
+{
 	if (!GetWorld()) return;
 
 	int32 TeamID = 0;

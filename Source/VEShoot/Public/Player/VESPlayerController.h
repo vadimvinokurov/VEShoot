@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "VESPlayerController.generated.h"
 
+class UVESRespawnComponent;
 /**
  *
  */
@@ -13,4 +14,11 @@ UCLASS()
 class VESHOOT_API AVESPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	AVESPlayerController();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UVESRespawnComponent* RespawnComponent;
 };

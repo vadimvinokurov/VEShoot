@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "VESAIController.generated.h"
 
+class UVESRespawnComponent;
 class UVESAIPerceptionComponent;
 
 UCLASS()
@@ -23,6 +24,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UVESAIPerceptionComponent* VESAIPerceptionComponent;
+
+	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
+	UVESRespawnComponent* RespawnComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	FName FocusOnKeyName = "EnemyActor";
