@@ -21,4 +21,6 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BLueprintReadWrite, Category = "Components")
 	UVESRespawnComponent* RespawnComponent;
+
+	virtual void OnPossess(APawn* aPawn) override;
 };

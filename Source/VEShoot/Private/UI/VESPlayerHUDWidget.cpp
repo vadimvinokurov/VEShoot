@@ -43,10 +43,10 @@ bool UVESPlayerHUDWidget::IsPlayerSpecating() const
 
 bool UVESPlayerHUDWidget::Initialize()
 {
-	const auto HealthComponent = VESUtils::GetVESPlayerComponent<UVESHealthComponent>(GetOwningPlayerPawn());
-	if (HealthComponent)
+	if (GetOwningPlayer())
 	{
-		HealthComponent->OnHealthChanged.AddUObject(this, &UVESPlayerHUDWidget::OnHealthChange);
+		GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &UVESPlayerHUDWidget::OnNewPawn);
+		OnNewPawn(GetOwningPlayerPawn());
 	}
 	return Super::Initialize();
 }
@@ -56,5 +56,14 @@ void UVESPlayerHUDWidget::OnHealthChange(float Health, float DeltaHealth)
 	if (DeltaHealth < 0)
 	{
 		OnTakeDamage();
+	}
+}
+
+void UVESPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
+{
+	const auto HealthComponent = VESUtils::GetVESPlayerComponent<UVESHealthComponent>(NewPawn);
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddUObject(this, &UVESPlayerHUDWidget::OnHealthChange);
 	}
 }
