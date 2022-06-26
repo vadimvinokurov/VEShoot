@@ -21,6 +21,8 @@ public:
 	AVESGameModeBase();
 	virtual void StartPlay() override;
 
+	void Killed(AController* KillerController, AController* VictimController);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	TSubclassOf<AAIController> AIControllerClass;
@@ -44,6 +46,8 @@ private:
 	void CreateTeamInfo();
 	FLinearColor DetermineColorByTeamID(int32 TeamID);
 	void SetPlayerColor(AController* Controller);
+
+	void LogPlayersInfo();
 
 	int32 CurrentRound = 1;
 	int32 RoundCountdown = 10;

@@ -64,6 +64,8 @@ private:
 
 	void PlayCameraShake();
 
+	void Killed(AController* KillerController);
+
 	float Health = 0.0f;
 
 	FTimerHandle AutoHealthTimerHandle;

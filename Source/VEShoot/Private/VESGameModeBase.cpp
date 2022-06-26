@@ -26,6 +26,20 @@ void AVESGameModeBase::StartPlay()
 	StartRound();
 }
 
+void AVESGameModeBase::Killed(AController* KillerController, AController* VictimController) {
+	const auto KillerPlayerState = KillerController ? Cast<AVESPlayerState>(KillerController->PlayerState) : nullptr;
+	const auto VictimPlayerState = VictimController ? Cast<AVESPlayerState>(VictimController->PlayerState) : nullptr;
+
+	if (KillerPlayerState)
+	{
+		KillerPlayerState->AddKill();
+	}
+	if (VictimPlayerState)
+	{
+		VictimPlayerState->AddDeath();
+	}
+}
+
 void AVESGameModeBase::SpawnBots()
 {
 	if (!GetWorld()) return;
@@ -56,6 +70,7 @@ void AVESGameModeBase::GameTimerUpdate()
 		else
 		{
 			UE_LOG(LogTemp, Display, TEXT("========================= Game Over ======================"));
+			LogPlayersInfo();
 		}
 	}
 }
@@ -83,6 +98,7 @@ void AVESGameModeBase::ResetOnePlayer(AController* Controller)
 		Controller->GetPawn()->Reset();
 	}
 	RestartPlayer(Controller);
+	SetPlayerColor(Controller);
 }
 
 void AVESGameModeBase::CreateTeamInfo()
@@ -128,6 +144,22 @@ void AVESGameModeBase::SetPlayerColor(AController* Controller)
 	if (!PlayerState) return;
 
 	Character->SetPlayerColor(PlayerState->GetTeamColor());
+}
+
+void AVESGameModeBase::LogPlayersInfo() {
+	if (!GetWorld()) return;
+
+	int32 TeamID = 0;
+	for (auto It = GetWorld()->GetControllerIterator(); It; It++)
+	{
+		const auto Controller = It->Get();
+		if (!Controller) continue;
+
+		const auto PlayerState = Cast<AVESPlayerState>(Controller->PlayerState);
+		if (!PlayerState) continue;
+
+		PlayerState->LogInfo();
+	}
 }
 
 UClass* AVESGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Camera/CameraShakeBase.h"
+#include "VESGameModeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -43,8 +44,7 @@ void UVESHealthComponent::BeginPlay()
 void UVESHealthComponent::OnTakeAnyDamage(
 	AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.0f || IsDead() || !GetWorld())
-		return;
+	if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
 
 	GetWorld()->GetTimerManager().ClearTimer(AutoHealthTimerHandle);
 
@@ -52,6 +52,7 @@ void UVESHealthComponent::OnTakeAnyDamage(
 
 	if (IsDead())
 	{
+		Killed(InstigatedBy);
 		OnDeath.Broadcast();
 	}
 	else if (AutoHealEnable)
@@ -89,7 +90,20 @@ void UVESHealthComponent::PlayCameraShake()
 
 	const auto Controller = Player->GetController<APlayerController>();
 	if (!Controller || !Controller->PlayerCameraManager) return;
-	
-	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
 
+	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
+}
+
+void UVESHealthComponent::Killed(AController* KillerController)
+{
+	if (!GetWorld()) return;
+
+	const auto GameMode = Cast<AVESGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	if (!GameMode) return;
+
+	const auto Player = Cast<APawn>(GetOwner());
+	const auto VictimController = Player ? Player->Controller : nullptr;
+
+	GameMode->Killed(KillerController, VictimController);
 }
