@@ -41,8 +41,11 @@ private:
 	void ResetPlayer();
 	void ResetOnePlayer(AController* Controller);
 
+	void CreateTeamInfo();
+	FLinearColor DetermineColorByTeamID(int32 TeamID);
+	void SetPlayerColor(AController* Controller);
+
 	int32 CurrentRound = 1;
 	int32 RoundCountdown = 10;
 	FTimerHandle GameRoundTimerHandle;
-
 };

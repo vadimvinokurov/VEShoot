@@ -51,6 +51,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	FVector2D LandedDamage = FVector2D(10.f, 100.0f);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
+	FName MaterialColorName = "Paint Color";
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -63,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetMovementDirection() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Teams")
+	void SetPlayerColor(const FLinearColor& Color);
 
 private:
 	void MoveForward(float Amount);

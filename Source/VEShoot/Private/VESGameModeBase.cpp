@@ -3,6 +3,7 @@
 #include "VESGameModeBase.h"
 #include "Player/VESBaseCharacter.h"
 #include "Player/VESPlayerController.h"
+#include "Player/VESPlayerState.h"
 #include "AIController.h"
 #include "TimerManager.h"
 #include "UI/VESGameHUD.h"
@@ -12,6 +13,7 @@ AVESGameModeBase::AVESGameModeBase()
 	DefaultPawnClass = AVESBaseCharacter::StaticClass();
 	PlayerControllerClass = AVESPlayerController::StaticClass();
 	HUDClass = AVESGameHUD::StaticClass();
+	PlayerStateClass = AVESPlayerState::StaticClass();
 };
 
 void AVESGameModeBase::StartPlay()
@@ -19,6 +21,7 @@ void AVESGameModeBase::StartPlay()
 	Super::StartPlay();
 
 	SpawnBots();
+	CreateTeamInfo();
 	CurrentRound = 1;
 	StartRound();
 }
@@ -63,7 +66,8 @@ void AVESGameModeBase::StartRound()
 	GetWorldTimerManager().SetTimer(GameRoundTimerHandle, this, &AVESGameModeBase::GameTimerUpdate, true, 1.0f);
 }
 
-void AVESGameModeBase::ResetPlayer() {
+void AVESGameModeBase::ResetPlayer()
+{
 	if (!GetWorld()) return;
 
 	for (auto It = GetWorld()->GetControllerIterator(); It; It++)
@@ -79,6 +83,51 @@ void AVESGameModeBase::ResetOnePlayer(AController* Controller)
 		Controller->GetPawn()->Reset();
 	}
 	RestartPlayer(Controller);
+}
+
+void AVESGameModeBase::CreateTeamInfo()
+{
+	if (!GetWorld()) return;
+
+	int32 TeamID = 0;
+	for (auto It = GetWorld()->GetControllerIterator(); It; It++)
+	{
+		const auto Controller = It->Get();
+		if (!Controller) continue;
+
+		const auto PlayerState = Cast<AVESPlayerState>(Controller->PlayerState);
+		if (!PlayerState) continue;
+
+		PlayerState->SetTeamID(TeamID);
+		PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
+		SetPlayerColor(Controller);
+		TeamID = (TeamID + 1) % 2;
+	}
+}
+
+FLinearColor AVESGameModeBase::DetermineColorByTeamID(int32 TeamID)
+{
+	if (TeamID < GameData.TeamColors.Num())
+	{
+		return GameData.TeamColors[TeamID];
+	}
+	else
+	{
+		return GameData.DefaultTeamColor;
+	}
+}
+
+void AVESGameModeBase::SetPlayerColor(AController* Controller)
+{
+	if (!Controller) return;
+
+	const auto Character = Cast<AVESBaseCharacter>(Controller->GetPawn());
+	if (!Character) return;
+
+	const auto PlayerState = Cast<AVESPlayerState>(Controller->PlayerState);
+	if (!PlayerState) return;
+
+	Character->SetPlayerColor(PlayerState->GetTeamColor());
 }
 
 UClass* AVESGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

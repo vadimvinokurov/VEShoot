@@ -112,6 +112,13 @@ float AVESBaseCharacter::GetMovementDirection() const
 	return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
+void AVESBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+	const auto MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+	if (!MaterialInstance) return;
+	MaterialInstance->SetVectorParameterValue(MaterialColorName, Color);
+}
+
 void AVESBaseCharacter::MoveForward(float Amount)
 {
 	if (Amount == 0.0f) return;
