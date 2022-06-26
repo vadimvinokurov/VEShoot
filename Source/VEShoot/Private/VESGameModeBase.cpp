@@ -9,6 +9,7 @@
 #include "UI/VESGameHUD.h"
 #include "VESUtils.h"
 #include "Components/VESRespawnComponent.h"
+#include "EngineUtils.h"
 
 AVESGameModeBase::AVESGameModeBase()
 {
@@ -86,8 +87,7 @@ void AVESGameModeBase::GameTimerUpdate()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Display, TEXT("========================= Game Over ======================"));
-			LogPlayersInfo();
+			GameOver();
 		}
 	}
 }
@@ -179,6 +179,21 @@ void AVESGameModeBase::LogPlayersInfo()
 		if (!PlayerState) continue;
 
 		PlayerState->LogInfo();
+	}
+}
+
+void AVESGameModeBase::GameOver() {
+
+	UE_LOG(LogTemp, Display, TEXT("========================= Game Over ======================"));
+	LogPlayersInfo();
+
+	for (auto Pawn : TActorRange<APawn>(GetWorld()))
+	{
+		if (Pawn)
+		{
+			Pawn->TurnOff();
+			Pawn->DisableInput(nullptr);
+		}
 	}
 }
 

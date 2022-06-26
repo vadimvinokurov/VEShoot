@@ -55,6 +55,8 @@ private:
 
 	void LogPlayersInfo();
 
+	void GameOver();
+
 	int32 CurrentRound = 1;
 	int32 RoundCountdown = 10;
 	FTimerHandle GameRoundTimerHandle;
